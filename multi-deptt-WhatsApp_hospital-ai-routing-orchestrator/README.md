@@ -1,6 +1,6 @@
 # 🏥 Production-Grade Enterprise HMS AI Agentic Orchestrator (n8n + WhatsApp)
 
-> **A multi-department, token-optimized AI Agent Orchestrator built on n8n for enterprise Hospital Management Systems (HMS). Operating via a single WhatsApp endpoint, it routes patients across multi-specialty clinical departments, manages real-time doctor availability, automates lab workflows, and handles bookings at ultralow API execution cost ($1 per 140 bookings).**
+> **A multi-department, token-optimized AI Agent Orchestrator built on n8n for enterprise Hospital Management Systems (HMS). Operating via a single WhatsApp endpoint, it routes patients across multi-specialty clinical departments, manages real-time doctor availability, automates lab workflows, and handles bookings at ultralow API execution cost ($1 per 100 bookings).**
 
 ---
 
