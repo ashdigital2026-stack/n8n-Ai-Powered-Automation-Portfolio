@@ -77,4 +77,34 @@ Single WhatsApp number routing system displaying an interactive service menu on 
 ---
 
 ### 📷 System Architecture Overview
+### 📷 Complete System Architecture Diagrams
+
+#### 1. Parent Orchestrator (Central Router)
 ![Parent Router Architecture](./parent_workflow_screenshot.PNG)
+
+---
+
+#### 2. New Appointment Booking Workflow
+![New Appointment Booking Architecture](./new_apt_screenshot.PNG)
+
+---
+
+#### 3. Rescheduling System Workflow
+![Rescheduling Workflow Architecture](./resheduling_screenshot.PNG)
+
+---
+
+#### 4. Cancellation System Workflow
+![Cancellation Workflow Architecture](./cancelling_screenshot.PNG)
+
+---
+
+#### 5. Laboratory Diagnostics & Booking Workflows
+![Lab Test Appointment Architecture](./lab_test_apt_screenshot.PNG)
+
+![Laboratory Info Architecture](./laboratory_info_screenshot.PNG)
+
+---
+
+#### 6. AI Receptionist Agent Workflows
+![Receptionist Agent Architecture](./Receptionist_123_screenshot.PNG)
