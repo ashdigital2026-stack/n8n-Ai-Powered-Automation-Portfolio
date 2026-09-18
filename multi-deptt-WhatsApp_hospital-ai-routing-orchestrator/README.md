@@ -67,14 +67,14 @@ Single WhatsApp number routing system displaying an interactive service menu on 
 
 | Module | Workflow JSON File | Architecture Diagram |
 | :--- | :--- | :--- |
-| **Parent Orchestrator** | `parent_workflow.json` | `parent_workflow_screenshot.png` |
-| **New Appointment Booking** | `new_apt_booking_workflow.json` | `new_apt_screenshot.png` |
-| **Rescheduling System** | `Rescheduling_123_workflow.json` | `resheduling_screenshot.png` |
-| **Cancellation System** | `Cancelling_123_workflow.json` | `cancelling_screenshot.png` |
-| **Lab Diagnostics & Booking** | `Lab_456_workflow.json` | `lab_test_apt_screenshot.png` / `laboratory_info_screenshot.png` |
-| **AI Receptionist Agents** | `Receptionist_123_workflow.json` / `Receptionist_456_workflow.json` | `Receptionist_123_screenshot.png` |
+| **Parent Orchestrator** | [`parent_workflow.json`](./parent_workflow.json) | [View Architecture](./parent_workflow_screenshot.PNG) |
+| **New Appointment Booking** | [`new_apt_booking_workflow.json`](./new_apt_booking_workflow.json) | [View Architecture](./new_apt_screenshot.PNG) |
+| **Rescheduling System** | [`Rescheduling_123_workflow.json`](./Rescheduling_123_workflow.json) | [View Architecture](./resheduling_screenshot.PNG) |
+| **Cancellation System** | [`Cancelling_123_workflow.json`](./Cancelling_123_workflow.json) | [View Architecture](./cancelling_screenshot.PNG) |
+| **Lab Diagnostics & Booking** | [`Lab_456_workflow.json`](./Lab_456_workflow.json) | [View Architecture 1](./lab_test_apt_screenshot.PNG) / [View Architecture 2](./laboratory_info_screenshot.PNG) |
+| **AI Receptionist Agents** | [`Receptionist_123_workflow.json`](./Receptionist_123_workflow.json) / [`Receptionist_456_workflow.json`](./Receptionist_456_workflow.json) | [View Architecture](./Receptionist_123_screenshot.PNG) |
 
 ---
 
 ### 📷 System Architecture Overview
-![Parent Router Architecture](./parent_workflow_screenshot.png)
+![Parent Router Architecture](./parent_workflow_screenshot.PNG)
