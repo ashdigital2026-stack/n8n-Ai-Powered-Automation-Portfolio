@@ -1,0 +1,542 @@
+{
+  "name": "Receptionist 456",
+  "nodes": [
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "User Message",
+              "type": "any"
+            },
+            {
+              "name": "Mobile Number"
+            },
+            {
+              "name": "Session ID"
+            },
+            {
+              "name": "Message Type"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -176,
+        -48
+      ],
+      "id": "e1a4066b-b418-4180-80b5-acf20ea5329a",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        -64,
+        160
+      ],
+      "id": "e4edf2ad-b41d-4135-aee3-8a12a7283d98",
+      "name": "Google Gemini Chat Model",
+      "retryOnFail": true,
+      "waitBetweenTries": 3000,
+      "credentials": {
+        "googlePalmApi": {
+          "id": "icETtaRNX99UUPUM",
+          "name": "kaminoor"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $json['Session ID'] }}",
+        "contextWindowLength": 8
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        96,
+        160
+      ],
+      "id": "84a88a1b-bb47-4114-b805-cabd7ee14e60",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "=Return with retreived data of columns in special formate\n\nTest Name: [Test Name]\t\nPrice (PKR): [Price]\nProtocol / Preparation: [Protocol / Preparation]\t\nReporting Time: [Reporting Time]\t\nLab Timing: [Lab Timing]\t\nAppointment Booking: [Appointment Booking]",
+        "documentId": {
+          "__rl": true,
+          "value": "1Sjk9V1yNY3YCEpjfMzdWZR9AbOYfyhczdBDh0ACDkp0",
+          "mode": "list",
+          "cachedResultName": "Hospital Management System",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Sjk9V1yNY3YCEpjfMzdWZR9AbOYfyhczdBDh0ACDkp0/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1068858986,
+          "mode": "list",
+          "cachedResultName": "Lab Tests",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Sjk9V1yNY3YCEpjfMzdWZR9AbOYfyhczdBDh0ACDkp0/edit#gid=1068858986"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        320,
+        144
+      ],
+      "id": "4f6223a0-fc72-44e1-8fba-7dcdc696b027",
+      "name": "Lab Test Tool",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "VRRh3M0FvZKBrGW0",
+          "name": "kaminoor84"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=User Message: {{ $json['User Message'] }} ",
+        "options": {
+          "systemMessage": "=IDENTITY: AI Receptionist — Pak International Hospital, Islamabad (Blue Area)\nTODAY: {{ $now.setZone('Asia/Karachi').format('cccc, d MMMM yyyy, HH:mm') }}\nLANGUAGE: Match user's last message language (English or Roman Urdu). Never mix scripts.\n\n| # | Rule\n\n| 1 | Use tool-returned data only. No guessing.                                    \n| 2 | One task at a time. Never skip steps.                                        \n| 3 | Welcome Block once per session only.                                         \n| 4 | After collecting mobile + name, store them. Never ask again in same   session.\n\n| 5 | Non-appointment queries: \"Please call 0321-1234567 for assistance.\"    \n\nNEW USER ROUTING:\n\n| User Sends    | Follow                                |\n| ------------- | ------------------------------------- |\n| `4`           | Rule 1: Lab Info                      |\n| `5`           | Rule 2: Book Appointment              |\n| `6`           | Rule 3: General Query                 |\n| Anything else | Repeat: *\"Please select: 4, 5, or 6\"* |\n\nRULE 1: Lab Info (4)\nStep 1: Ask: \"Please share your 12 digit (923xxxxxxxx) mobile number and your name.\"\nStep 2: On receiving mobile + name:\nCall Lab Marketing Data Tool (store name + mobile)\nAsk: \"Which lab test do you need info for?\"\nStep 3: On receiving test name:\nCall Lab Tests Tool\nReply:\n\nTest Name: [Name]\nPrice (PKR): [Price]\nPreparation: [Protocol]\nReporting Time: [Time]\nLab Timing: [Hours]\nAppointment Booking: [Booking]\n\nStep 4: If user says \"book this\" or \"appointment\":\nUse stored: name, mobile, test name, charges\nOutput:\n\nPatient Name: [Name]\nMobile Number: [Mobile]\nTest Name: [Test]\nTest Charges: [Charges]\nRouting Destination: Labforbooking\n\nRULE 2: Book Appointment (5) \nStep 1: Ask: \"Please share your 11-digit mobile number and your name.\"\nStep 2: On receiving mobile + name:\nOutput this Data Block — do not wait for further user input:\n\nPatient Name: [Name]\nMobile Number: [Mobile]\nRouting Destination: Labforbooking\n\n\nRULE 3: General Query (6)\nStep 1: Detect intent.\n\nIntent:        \nDoctor info\nAction: \nCall `Dr List Tool` → verify name + department → call `Department Tool` → reply: `Dr Name / Department / Fee / Availability / Duty Hours / Days`                                   \nIntent:\nReport status \nAction:\nAsk: *\"Please share your Reference ID\"* → call `Lab Report Tool` → **Found:** *\"Report ready. \nCall 0321-1234567 if not received\"* → **Not found:** *\"Report pending. Please wait\"*\n\nOn thanks: Reply user with text \"Welcome and thanks for choosing Pak International Hospital\"\nOther:\n\"Please call 0321-1234567 for assistance.\"    "
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        80,
+        -48
+      ],
+      "id": "9d03c1d6-cd97-4c04-86e3-c91c27efa29a",
+      "name": "Receptionist 456",
+      "retryOnFail": true,
+      "waitBetweenTries": 3000
+    },
+    {
+      "parameters": {
+        "operation": "send",
+        "phoneNumberId": "1084926121366953",
+        "recipientPhoneNumber": "={{ $('When Executed by Another Workflow').item.json['Mobile Number'] }}",
+        "textBody": "={{ $json.output }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.whatsApp",
+      "typeVersion": 1.1,
+      "position": [
+        544,
+        64
+      ],
+      "id": "e795a357-9e80-496f-8edc-fb4e814e2e4e",
+      "name": "Send message",
+      "webhookId": "bb2316b4-f3ba-4d06-a2fa-e9cdd6dc58f7",
+      "credentials": {
+        "whatsAppApi": {
+          "id": "GT5wOhx2SBmcTiBR",
+          "name": "60 Days Token"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// 1. Get the incoming data from the previous node\nconst inputItem = $input.item.json;\n\n// The input is a plain text string in the 'output' field\nconst rawOutput = inputItem.output || \"\";\n\nlet patientName = \"\";\nlet mobileNumber = \"\";\nlet testName = \"\";\nlet testCharges = \"\";\nlet routingDestination = \"\";\n\n// 2. Parse the plain text string\nif (rawOutput && typeof rawOutput === \"string\") {\n    // Replace literal \\n with actual newlines, then split\n    const lines = rawOutput.replace(/\\\\n/g, '\\n').split('\\n');\n    \n    for (let line of lines) {\n        line = line.trim();\n        \n        if (line.startsWith(\"Patient Name:\")) {\n            patientName = line.replace(\"Patient Name:\", \"\").trim();\n        }\n        else if (line.startsWith(\"Mobile Number:\")) {\n            mobileNumber = line.replace(\"Mobile Number:\", \"\").trim();\n        }\n        else if (line.startsWith(\"Test Name:\")) {\n            testName = line.replace(\"Test Name:\", \"\").trim();\n        }\n        else if (line.startsWith(\"Test Charges:\")) {\n            testCharges = line.replace(\"Test Charges:\", \"\").trim();\n        }\n        else if (line.startsWith(\"Routing Destination:\")) {\n            routingDestination = line.replace(\"Routing Destination:\", \"\").trim();\n        }\n    }\n}\n\n// 3. Convert mobile number to country code format (92XXXXXXXXXX)\nfunction formatToCountryCode(num) {\n    if (!num) return \"923005278470\";\n    \n    // Remove any non-digit characters\n    let digits = num.replace(/\\D/g, '');\n    \n    // If starts with 0 (local format like 03005278470), replace 0 with 92\n    if (digits.startsWith('0')) {\n        return '92' + digits.substring(1);\n    }\n    \n    // If already starts with 92, return as-is\n    if (digits.startsWith('92')) {\n        return digits;\n    }\n    \n    // If starts with 3 (without leading 0), prepend 92\n    if (digits.startsWith('3')) {\n        return '92' + digits;\n    }\n    \n    return digits;\n}\n\nconst formattedMobile = formatToCountryCode(mobileNumber);\n\n// 4. Generate the required Session ID format (MobileNumber-YYYYMMDD-HHmmss)\nconst formattedDateTime = $now.setZone('Asia/Karachi').toFormat('yyyyMMdd-HHmmss');\nconst generatedSessionId = `${formattedMobile}-${formattedDateTime}`;\n\n// 5. Initialize variables for routing\nlet destination = null;\n\n// 6. Use Routing Destination value if present\nif (routingDestination) {\n    destination = routingDestination;\n}\n\n// 7. Build the final clean output block\nconst outputData = {\n    routingDestination: destination,\n    patientName: patientName,\n    mobileNumber: formattedMobile,\n    testName: testName,\n    testCharges: testCharges,\n    sessionId: generatedSessionId\n};\n\nreturn { json: outputData };"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        640,
+        -64
+      ],
+      "id": "ade2e65a-dee9-40d2-8143-514e83e42c0d",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "d4a0015d-6b3d-4324-8fc0-fe534024eab9",
+              "leftValue": "={{ $json.output }}",
+              "rightValue": "Routing Destination: Labforbooking",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        400,
+        -48
+      ],
+      "id": "87771877-a937-4dec-b2f5-31872d75c1e8",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1Sjk9V1yNY3YCEpjfMzdWZR9AbOYfyhczdBDh0ACDkp0",
+          "mode": "list",
+          "cachedResultName": "Hospital Management System",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Sjk9V1yNY3YCEpjfMzdWZR9AbOYfyhczdBDh0ACDkp0/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 306517679,
+          "mode": "list",
+          "cachedResultName": "Session Manager",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Sjk9V1yNY3YCEpjfMzdWZR9AbOYfyhczdBDh0ACDkp0/edit#gid=306517679"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Mobile Number": "={{ $('When Executed by Another Workflow').item.json['Mobile Number'] }}",
+            "Session ID": "={{ $('When Executed by Another Workflow').item.json['Session ID'] }}",
+            "Routing Destination": "={{ $json.routingDestination }}"
+          },
+          "matchingColumns": [
+            "Session ID"
+          ],
+          "schema": [
+            {
+              "id": "Mobile Number",
+              "displayName": "Mobile Number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Session ID",
+              "displayName": "Session ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Routing Destination",
+              "displayName": "Routing Destination",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        816,
+        -64
+      ],
+      "id": "a81023e9-7595-40ff-97b8-05086ec008db",
+      "name": "Update row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "VRRh3M0FvZKBrGW0",
+          "name": "kaminoor84"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "=ujFmFq3p7t3Mc8JJ",
+          "mode": "id",
+          "cachedResultUrl": "/workflow/=ujFmFq3p7t3Mc8JJ"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "query": "=Patient is interested in new appointment book as per following detail. Please handle further\n\nPatient Name: {{ $('Code in JavaScript').item.json.patientName }}\nMobile Number: {{ $('Code in JavaScript').item.json.mobileNumber }}\nTest Name: {{ $('Code in JavaScript').item.json.testName }}\nTest Charges: {{ $('Code in JavaScript').item.json.testCharges }}\n\n",
+            "Session ID": "={{ $('When Executed by Another Workflow').item.json['Session ID'] }}",
+            "Phone": "={{ $('When Executed by Another Workflow').item.json['Mobile Number'] }}",
+            "Message Type": "={{ $('When Executed by Another Workflow').item.json['Message Type'] }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "query",
+              "displayName": "query",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Session ID",
+              "displayName": "Session ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "Phone",
+              "displayName": "Phone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "Message Type",
+              "displayName": "Message Type",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        1232,
+        -64
+      ],
+      "id": "ec1a37a9-f09a-49b0-8bdc-d8e8dc806caf",
+      "name": "Lab 456"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1Sjk9V1yNY3YCEpjfMzdWZR9AbOYfyhczdBDh0ACDkp0",
+          "mode": "list",
+          "cachedResultName": "Hospital Management System",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Sjk9V1yNY3YCEpjfMzdWZR9AbOYfyhczdBDh0ACDkp0/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1516888474,
+          "mode": "list",
+          "cachedResultName": "Lab Marketing Data ",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Sjk9V1yNY3YCEpjfMzdWZR9AbOYfyhczdBDh0ACDkp0/edit#gid=1516888474"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Customer Name": "={{ $('Code in JavaScript').item.json.patientName }}",
+            "Mobile Number": "={{ $('Code in JavaScript').item.json.mobileNumber }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Customer Name",
+              "displayName": "Customer Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Mobile Number",
+              "displayName": "Mobile Number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1024,
+        -64
+      ],
+      "id": "a859c02b-7fee-4487-b38f-04fe263e42d3",
+      "name": "Marketing Data",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "VRRh3M0FvZKBrGW0",
+          "name": "kaminoor84"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Receptionist 456",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Receptionist 456",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "Receptionist 456",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lab Test Tool": {
+      "ai_tool": [
+        [
+          {
+            "node": "Receptionist 456",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Receptionist 456": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Update row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update row in sheet": {
+      "main": [
+        [
+          {
+            "node": "Marketing Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Marketing Data": {
+      "main": [
+        [
+          {
+            "node": "Lab 456",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false,
+    "timeSavedMode": "fixed",
+    "timezone": "Asia/Karachi",
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": "3rgBvb9SdYE91zJI"
+  },
+  "versionId": "aaddbe9a-dcd2-45e0-81bf-0635d670b893",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "920c4e5278a15531d84dbf6f08effc6e93b5e1fe7aa67dfade5d207272cfae92"
+  },
+  "id": "hM1MKyG74nvsb2UJ",
+  "tags": []
+}

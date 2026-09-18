@@ -1,0 +1,943 @@
+{
+  "name": "Cancelling 123",
+  "nodes": [
+    {
+      "parameters": {
+        "operation": "delete",
+        "calendar": {
+          "__rl": true,
+          "value": "={{ $json.calendarId }}",
+          "mode": "id"
+        },
+        "eventId": "={{ $json.eventId }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleCalendar",
+      "typeVersion": 1.3,
+      "position": [
+        -128,
+        -128
+      ],
+      "id": "d21dc6cd-502b-4748-a5e2-705f29f408e5",
+      "name": "Delete an event",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "CuXKbTgFvcMEPT19",
+          "name": "kaminoor84"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1Sjk9V1yNY3YCEpjfMzdWZR9AbOYfyhczdBDh0ACDkp0",
+          "mode": "list",
+          "cachedResultName": "Hospital Management System",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Sjk9V1yNY3YCEpjfMzdWZR9AbOYfyhczdBDh0ACDkp0/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Patient Data",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Sjk9V1yNY3YCEpjfMzdWZR9AbOYfyhczdBDh0ACDkp0/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Event_ID",
+              "lookupValue": "={{ $('Code in JavaScript').item.json.eventId }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        16,
+        -128
+      ],
+      "id": "1857c11b-4885-4ded-bd12-b7255830333d",
+      "name": "Get row(s) in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "VRRh3M0FvZKBrGW0",
+          "name": "kaminoor84"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "delete",
+        "documentId": {
+          "__rl": true,
+          "value": "1Sjk9V1yNY3YCEpjfMzdWZR9AbOYfyhczdBDh0ACDkp0",
+          "mode": "list",
+          "cachedResultName": "Hospital Management System",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Sjk9V1yNY3YCEpjfMzdWZR9AbOYfyhczdBDh0ACDkp0/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Patient Data",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Sjk9V1yNY3YCEpjfMzdWZR9AbOYfyhczdBDh0ACDkp0/edit#gid=0"
+        },
+        "startIndex": "={{ $json.row_number }}"
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        208,
+        -128
+      ],
+      "id": "55d2561b-16cf-4a72-a7f5-b06600eabbb6",
+      "name": "Delete rows or columns from sheet",
+      "alwaysOutputData": false,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "VRRh3M0FvZKBrGW0",
+          "name": "kaminoor84"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "send",
+        "phoneNumberId": "1084926121366953",
+        "recipientPhoneNumber": "={{ $('When Executed by Another Workflow').item.json['Mobile Number'] }}",
+        "textBody": "=Your appointment has been cancelled! ✅\n\nPatient Name:{{ $('Code in JavaScript').item.json.patientName }}\nMobile: {{ $('Code in JavaScript').item.json.mobileNumber }}\nDoctor Name: {{ $('Code in JavaScript').item.json.doctorName }}\nDate: {{ $('Code in JavaScript').item.json.date }}\n\nFor new booking please contact. Thanks\nFor other queries not related to booking, cancel, and reschedule, please contact 0321-1234567\n\n",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.whatsApp",
+      "typeVersion": 1.1,
+      "position": [
+        800,
+        -128
+      ],
+      "id": "8f3ee901-8e35-4532-bd5e-4081c7569af1",
+      "name": "Text Sender2",
+      "webhookId": "5963a46f-7b98-486a-b1e1-870d5b71153e",
+      "credentials": {
+        "whatsAppApi": {
+          "id": "GT5wOhx2SBmcTiBR",
+          "name": "60 Days Token"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.query }}",
+        "options": {
+          "systemMessage": "Your Role is to cancel and delete the already existing appointment. \n\nStep 1: Strictly pick the data from users prompt and print it out in below data block format\n\nPatient Name: [Name]\nMobile: [Mobile]\nDoctor Name: [Doctor]\nDate: [Date]\nTime: [Start] to [End]\n\nIf above details are correct, shall i cancel? \n\nStep 2. On receiving \"Yes, Ok, Done, use calendar & event id for users prompt and output json block\n\n{\"intent\":\"booking cancelled\",\"patientName\":\"\",\"mobile\":\"\",\"department\":\"\",\"doctorName\":\"\",\"date\":\"\",\"eventId\":\"\",\"calendarId\":\"\"}\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        -848,
+        -112
+      ],
+      "id": "958a035b-aa16-438e-b79c-908622eb2ff8",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.5-flash-lite",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        -896,
+        128
+      ],
+      "id": "70c37260-da89-4cb7-8eb9-201f4be532a9",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "icETtaRNX99UUPUM",
+          "name": "kaminoor"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $('When Executed by Another Workflow').item.json['Session ID'] }}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        -752,
+        128
+      ],
+      "id": "688daf69-bc90-4fee-ba5d-2fd39dd7c0bf",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "jsCode": "// 1. Fetch raw text from the previous AI node\nconst inputItem = $input.item.json;\nlet rawText = inputItem.output || \"\";\n\n// Initialize routing flags and data maps\nlet parsedData = {};\nlet isIntentRoute = false;\n\n// Normalize line breaks and string spaces\nrawText = rawText.replace(/\\\\n/g, '\\n').replace(/\\\\r/g, '\\r').trim();\n\n// 2. MATRIX PARSING ENGINE: Intercept and validate JSON Block format\nif (rawText.includes('{') && rawText.includes('}')) {\n    try {\n        // Isolate the JSON string structure out of raw prose\n        const startJson = rawText.indexOf('{');\n        const endJson = rawText.lastIndexOf('}') + 1;\n        const jsonString = rawText.substring(startJson, endJson);\n        const cleanJson = JSON.parse(jsonString);\n        \n        // Normalize keys to lowercase to eliminate case mismatches\n        for (let key in cleanJson) {\n            parsedData[key.toLowerCase().replace(/[\\s_\\-]/g, '')] = String(cleanJson[key]);\n        }\n        \n        // Target Intent Verification: Check for cancellation structure\n        if (parsedData[\"intent\"] === \"booking cancelled\" || parsedData[\"intent\"] === \"cancelled\") {\n            isIntentRoute = true;\n        }\n    } catch (e) {\n        // Fall back to text line matching if JSON parsing fails due to syntax anomalies\n        parseTextByLines(rawText, parsedData);\n    }\n} else {\n    parseTextByLines(rawText, parsedData);\n}\n\n// Fallback line processing algorithm\nfunction parseTextByLines(text, dataObj) {\n    const lines = text.split(/[\\n\\r,]+/);\n    for (let line of lines) {\n        const colonIndex = line.indexOf(':');\n        if (colonIndex !== -1) {\n            let key = line.substring(0, colonIndex).replace(/[\\\\\"\\*\\{\\}]/g, '').trim().toLowerCase().replace(/[\\s_\\-]/g, '');\n            let value = line.substring(colonIndex + 1).replace(/[\\\\\"\\{\\}]/g, '').trim();\n            if (value.endsWith(',')) value = value.slice(0, -1).trim();\n            \n            if (key && value !== \"\" && !value.startsWith('[')) {\n                dataObj[key] = value;\n            }\n        }\n    }\n    if (dataObj[\"intent\"] === \"booking cancelled\" || dataObj[\"intent\"] === \"cancelled\") {\n        isIntentRoute = true;\n    }\n}\n\n// 3. DATA EXTRACTION LAYER\nconst intent = parsedData[\"intent\"] || (isIntentRoute ? \"booking cancelled\" : \"normal chat\");\nconst patientName = parsedData[\"patientname\"] || parsedData[\"patient name\"] || \"\";\nconst doctorName = parsedData[\"doctorname\"] || parsedData[\"doctor name\"] || \"\";\nconst department = parsedData[\"department\"] || \"\";\nconst calendarId = parsedData[\"calendarid\"] || parsedData[\"calendar id\"] || \"\";\nconst eventId = parsedData[\"eventid\"] || parsedData[\"event id\"] || null;\nconst rawDate = parsedData[\"date\"] || \"2026-05-28\";\n\n// Normalize Mobile Format (Strictly starting with 92, dropping leading 0)\nlet rawMobile = parsedData[\"mobile\"] || parsedData[\"mobilenumber\"] || \"\";\nlet cleanMobile = rawMobile.replace(/[^\\d]/g, '');\nif (cleanMobile.startsWith('0')) {\n    cleanMobile = '92' + cleanMobile.substring(1);\n} else if (!cleanMobile.startsWith('92') && cleanMobile.length > 0) {\n    cleanMobile = '92' + cleanMobile;\n}\n\n// 4. PACKAGING SYSTEM RESILIENT OUTBOUND PAYLOAD\nconst outputData = {\n    isIntent: isIntentRoute, // <--- Map your downstream IF Node strictly to this boolean variable\n    intent: intent,\n    patientName: patientName,\n    mobileNumber: cleanMobile,\n    department: department,\n    doctorName: doctorName,\n    date: rawDate,\n    calendarId: calendarId,\n    eventId: eventId,\n    conversationalReply: !isIntentRoute ? rawText : \"\" \n};\n\nreturn { json: outputData };"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -528,
+        -112
+      ],
+      "id": "732b1526-ef16-45a8-9b53-04d36ba00aed",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "c715e174-b0f7-4795-8741-7f839f137983",
+              "leftValue": "={{ $json.intent }}",
+              "rightValue": "booking cancelled",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -352,
+        -112
+      ],
+      "id": "9cec74d7-e8e3-43bc-860e-d8abe5eb0b90",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "query",
+              "type": "any"
+            },
+            {
+              "name": "Mobile Number"
+            },
+            {
+              "name": "Session ID"
+            },
+            {
+              "name": "Message Type"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -1776,
+        -96
+      ],
+      "id": "0c50b31e-af40-4823-b92b-8b1a3ed37833",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1Sjk9V1yNY3YCEpjfMzdWZR9AbOYfyhczdBDh0ACDkp0",
+          "mode": "list",
+          "cachedResultName": "Hospital Management System",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Sjk9V1yNY3YCEpjfMzdWZR9AbOYfyhczdBDh0ACDkp0/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 306517679,
+          "mode": "list",
+          "cachedResultName": "Session Manager",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Sjk9V1yNY3YCEpjfMzdWZR9AbOYfyhczdBDh0ACDkp0/edit#gid=306517679"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Session ID",
+              "lookupValue": "={{ $('When Executed by Another Workflow').item.json['Session ID'] }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        416,
+        -128
+      ],
+      "id": "89e0fc6a-94ff-4486-90de-c12bfb8e3fcc",
+      "name": "Get row(s) in sheet1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "VRRh3M0FvZKBrGW0",
+          "name": "kaminoor84"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "delete",
+        "documentId": {
+          "__rl": true,
+          "value": "1Sjk9V1yNY3YCEpjfMzdWZR9AbOYfyhczdBDh0ACDkp0",
+          "mode": "list",
+          "cachedResultName": "Hospital Management System",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Sjk9V1yNY3YCEpjfMzdWZR9AbOYfyhczdBDh0ACDkp0/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 306517679,
+          "mode": "list",
+          "cachedResultName": "Session Manager",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Sjk9V1yNY3YCEpjfMzdWZR9AbOYfyhczdBDh0ACDkp0/edit#gid=306517679"
+        },
+        "startIndex": "={{ $json.row_number }}"
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        624,
+        -128
+      ],
+      "id": "2a59a033-540f-424f-aae2-0162c6da1ac6",
+      "name": "Delete rows or columns from sheet1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "VRRh3M0FvZKBrGW0",
+          "name": "kaminoor84"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "=https://graph.facebook.com/v21.0/{{ $('WhatsApp Trigger1').item.json.messages[0].audio.id }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBearerAuth",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        -1456,
+        240
+      ],
+      "id": "27f73158-d43a-4327-b19a-416fcca4a430",
+      "name": "HTTP Request",
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "UvpWGVsnm9UQHe7j",
+          "name": "Bearer Auth account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.url }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBearerAuth",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        -1312,
+        240
+      ],
+      "id": "b8f2fdc9-4a0b-4095-a7f0-a6de0e92d0a7",
+      "name": "HTTP Request11",
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "UvpWGVsnm9UQHe7j",
+          "name": "Bearer Auth account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.groq.com/openai/v1/audio/transcriptions",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBearerAuth",
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "parameterType": "formBinaryData",
+              "name": "file",
+              "inputDataFieldName": "data"
+            },
+            {
+              "name": "model",
+              "value": "whisper-large-v3"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        -1152,
+        240
+      ],
+      "id": "f03445a6-bdac-4aab-901c-126820b75d05",
+      "name": "HTTP Request12",
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "kePPL0JgLNNHCJiB",
+          "name": "Whisper groq API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// 1. Get the incoming data item\nconst incomingItems = $input.all();\nlet basePayload = {};\n\nif (incomingItems && incomingItems.length > 0) {\n  basePayload = incomingItems[0].json;\n}\n\n// 2. Extract the query string accurately from any incoming path variation\n// This checks 'query', 'User Message', or 'text' based on your workflow paths\nlet finalQuery = basePayload[\"query\"] || basePayload[\"User Message\"] || basePayload[\"text\"] || \"\";\n\n// 3. Determine the Message Type dynamically\nlet messageType = basePayload[\"Message Type\"] || (basePayload[\"text\"] ? \"audio\" : \"text\");\n\n// 4. Return ONLY the two requested keys in the output payload\nreturn [{\n  json: {\n    \"query\": finalQuery,\n    \"Message Type\": messageType\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1040,
+        -112
+      ],
+      "id": "9e5b0998-21ca-4394-b226-72c2736040b9",
+      "name": "Code in JavaScript6"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "757ab8aa-9c65-45c9-a49e-b75bb7b1a207",
+              "leftValue": "={{ $json['Message Type'] }}",
+              "rightValue": "audio",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -1568,
+        -96
+      ],
+      "id": "80ec1d5c-f0af-41ad-8555-8bb2873b073a",
+      "name": "If1"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "e689d853-24d8-49ca-9692-7d04a14c9df3",
+              "leftValue": "={{ $('When Executed by Another Workflow').item.json['Message Type'] }}",
+              "rightValue": "audio",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -208,
+        336
+      ],
+      "id": "06072b0f-8ff2-4e30-9157-d2d2d41174dd",
+      "name": "If2"
+    },
+    {
+      "parameters": {
+        "jsCode": "// 1. Target the incoming data from the active item loop\nconst items = $json;\n\n// 2. Grab the text output sent from your AI Agent\nconst messageText = items.output || \"\";\n\n// 3. Fallback to your current state tracking routing type\nlet determinedType = items[\"Message Type\"] || \"audio\";\n\n// 4. Convert text to lowercase once for accurate string checking\nconst lowerText = messageText.toLowerCase();\n\n// 5. Check Rule A: Explicit Clinic Action JSON Intents (Kept as is)\nconst hasJsonIntent = lowerText.includes(\"booking confirmed\") || \n                      lowerText.includes(\"booking rescheduled\") || \n                      lowerText.includes(\"booking cancelled\");\n\n// 6. Check Rule B: Core Patient & Clinic Confirmation Headers\nconst hasSummaryLayout = lowerText.includes(\"patient name:\") || \n                         lowerText.includes(\"mobile number:\") || \n                         lowerText.includes(\"confirmation summary:\") ||\n                         lowerText.includes(\"shall i book?\");\n\n// 7. Check Rule C: Slot Availability Announcements\nconst hasSlotList = lowerText.includes(\"available slots:\") || \n                    lowerText.includes(\"slot on\") || \n                    lowerText.includes(\"is unavailable\");\n\n// 8. If any structured confirmation layout or slot list matches, force Text route\nif (hasJsonIntent || hasSummaryLayout || hasSlotList) {\n    determinedType = \"text\";\n}\n\n// 9. Output the clean object back to your downstream workflow nodes\nreturn {\n    \"output\": messageText,\n    \"Message Type\": determinedType,\n    \"Customer Number\": items[\"Customer Number\"] || \"\",\n    \"Session ID\": items[\"Session ID\"] || \"\",\n    \"Current_Department\": items[\"Current_Department\"] || \"Clinic Deptt\"\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -32,
+        384
+      ],
+      "id": "0a27e08f-eef4-4e12-af87-71a5b2f39c18",
+      "name": "Code in JavaScript5"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "ce112504-2fd9-4770-baf3-265ea085c794",
+              "leftValue": "={{ $json['Message Type'] }}",
+              "rightValue": "audio",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        176,
+        384
+      ],
+      "id": "6db4017d-05ca-4977-9ecb-2428c13d7aed",
+      "name": "If5"
+    },
+    {
+      "parameters": {
+        "operation": "send",
+        "phoneNumberId": "1084926121366953",
+        "recipientPhoneNumber": "={{ $('When Executed by Another Workflow').item.json['Mobile Number'] }}",
+        "textBody": "={{ $('Code in JavaScript').item.json.conversationalReply }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.whatsApp",
+      "typeVersion": 1.1,
+      "position": [
+        288,
+        144
+      ],
+      "id": "df982663-19a3-420e-8448-f31273fa204b",
+      "name": "Send message3",
+      "webhookId": "599f7670-2995-4d99-bb8e-6d2e70985fca",
+      "credentials": {
+        "whatsAppApi": {
+          "id": "GT5wOhx2SBmcTiBR",
+          "name": "60 Days Token"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "send",
+        "phoneNumberId": "1084926121366953",
+        "recipientPhoneNumber": "={{ $('When Executed by Another Workflow').item.json.Phone }}",
+        "messageType": "audio",
+        "mediaLink": "={{ $json.secure_url.replace('.wav', '.mp3') }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.whatsApp",
+      "typeVersion": 1.1,
+      "position": [
+        944,
+        400
+      ],
+      "id": "a77d416c-fd1f-4981-a67c-bd782f6cfe4a",
+      "name": "Audio Sender",
+      "webhookId": "01e9f61b-8ca4-47c2-8316-37615623b586",
+      "credentials": {
+        "whatsAppApi": {
+          "id": "GT5wOhx2SBmcTiBR",
+          "name": "60 Days Token"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "uploadFile",
+        "resource_type_file": "video",
+        "additionalFieldsFile": {
+          "public_id": "Voicenote"
+        }
+      },
+      "type": "n8n-nodes-cloudinary.cloudinary",
+      "typeVersion": 1,
+      "position": [
+        784,
+        400
+      ],
+      "id": "daf24d3f-7270-4f14-98d0-0a7c175daa9d",
+      "name": "Upload an asset from file data",
+      "credentials": {
+        "cloudinaryApi": {
+          "id": "RWV1AdCIOU2S218S",
+          "name": "Cloudinary account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-tts:generateContent?key=AQ.Ab8RN6InQvFVJFhEg-ZVtI3EqkQ2Ha8O06CXkEiiz9n3fBJ7wA",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"contents\": [\n    {\n      \"parts\": [\n        {\n          \"text\": {{ JSON.stringify($json.output || $node[\"New Appointment\"].json[\"output\"]) }}\n        }\n      ]\n    }\n  ],\n  \"generationConfig\": {\n    \"responseModalities\": [\"AUDIO\"],\n    \"speechConfig\": {\n      \"voiceConfig\": {\n        \"prebuiltVoiceConfig\": {\n          \"voiceName\": \"Kore\"\n        }\n      }\n    }\n  }\n}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        416,
+        400
+      ],
+      "id": "1a9e8556-5246-446c-bbdc-70fcf672153c",
+      "name": "HTTP Request8"
+    },
+    {
+      "parameters": {
+        "jsCode": "// 1. Get Base64 from Gemini\nconst base64Data = $json.candidates[0].content.parts[0].inlineData.data;\nconst pcmBuffer = Buffer.from(base64Data, 'base64');\n\n// 2. Create WAV Header (44 bytes) so Cloudinary recognizes it\nconst wavHeader = Buffer.alloc(44);\nwavHeader.write('RIFF', 0);\nwavHeader.writeUInt32LE(36 + pcmBuffer.length, 4);\nwavHeader.write('WAVE', 8);\nwavHeader.write('fmt ', 12);\nwavHeader.writeUInt32LE(16, 16);\nwavHeader.writeUInt16LE(1, 20); // PCM format\nwavHeader.writeUInt16LE(1, 22); // Mono\nwavHeader.writeUInt32LE(24000, 24); // Sample Rate (Gemini is 24kHz)\nwavHeader.writeUInt32LE(24000 * 2, 28); // Byte Rate\nwavHeader.writeUInt16LE(2, 32); // Block Align\nwavHeader.writeUInt16LE(16, 34); // Bits per sample\nwavHeader.write('data', 36);\nwavHeader.writeUInt32LE(pcmBuffer.length, 40);\n\n// 3. Combine Header + Raw Data\nconst finalBuffer = Buffer.concat([wavHeader, pcmBuffer]);\n\n// 4. Register as a file for Cloudinary\nconst binaryData = await this.helpers.prepareBinaryData(\n    finalBuffer, \n    'appointment_voice.mp3', \n    'audio/mpeg'\n);\n\nreturn [\n  {\n    json: { resource_type: \"video\" },\n    binary: { data: binaryData }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        608,
+        400
+      ],
+      "id": "4ffdde40-8550-4d7b-a425-74e39a4665b3",
+      "name": "Code in JavaScript4"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Delete an event": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "Delete rows or columns from sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Delete rows or columns from sheet": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Text Sender2": {
+      "main": [
+        []
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Delete an event",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "If2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet1": {
+      "main": [
+        [
+          {
+            "node": "Delete rows or columns from sheet1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Delete rows or columns from sheet1": {
+      "main": [
+        [
+          {
+            "node": "Text Sender2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request11",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request11": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request12",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request12": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript6",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript6": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If2": {
+      "main": [
+        [
+          {
+            "node": "Send message3",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Code in JavaScript5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript5": {
+      "main": [
+        [
+          {
+            "node": "If5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If5": {
+      "main": [
+        [
+          {
+            "node": "Send message3",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "HTTP Request8",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload an asset from file data": {
+      "main": [
+        [
+          {
+            "node": "Audio Sender",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request8": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript4": {
+      "main": [
+        [
+          {
+            "node": "Upload an asset from file data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false,
+    "timeSavedMode": "fixed",
+    "timezone": "Asia/Karachi",
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "versionId": "cf82fe11-48ab-4f90-b837-ee0a096c2237",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "920c4e5278a15531d84dbf6f08effc6e93b5e1fe7aa67dfade5d207272cfae92"
+  },
+  "id": "QDEOVV0QD2QE5ZBC",
+  "tags": []
+}

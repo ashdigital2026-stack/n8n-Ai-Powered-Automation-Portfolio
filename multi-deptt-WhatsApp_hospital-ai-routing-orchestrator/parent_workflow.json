@@ -1,0 +1,4616 @@
+{
+  "name": "Receptionist 1",
+  "nodes": [
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1Sjk9V1yNY3YCEpjfMzdWZR9AbOYfyhczdBDh0ACDkp0",
+          "mode": "list",
+          "cachedResultName": "Hospital Management System",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Sjk9V1yNY3YCEpjfMzdWZR9AbOYfyhczdBDh0ACDkp0/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 306517679,
+          "mode": "list",
+          "cachedResultName": "Session Manager",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Sjk9V1yNY3YCEpjfMzdWZR9AbOYfyhczdBDh0ACDkp0/edit#gid=306517679"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Mobile Number": "={{ $('Code in JavaScript3').item.json.mobileNumber }}",
+            "Session ID": "={{ $('Code in JavaScript3').item.json.sessionId }}",
+            "Routing Destination": "={{ $('Code in JavaScript3').item.json.route }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Mobile Number",
+              "displayName": "Mobile Number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Session ID",
+              "displayName": "Session ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Routing Destination",
+              "displayName": "Routing Destination",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -944,
+        176
+      ],
+      "id": "b7b9eb19-b985-4b50-b4cc-8db860fefa7e",
+      "name": "Append row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "VRRh3M0FvZKBrGW0",
+          "name": "kaminoor84"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1Sjk9V1yNY3YCEpjfMzdWZR9AbOYfyhczdBDh0ACDkp0",
+          "mode": "list",
+          "cachedResultName": "Hospital Management System",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Sjk9V1yNY3YCEpjfMzdWZR9AbOYfyhczdBDh0ACDkp0/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 306517679,
+          "mode": "list",
+          "cachedResultName": "Session Manager",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Sjk9V1yNY3YCEpjfMzdWZR9AbOYfyhczdBDh0ACDkp0/edit#gid=306517679"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Mobile Number": "={{ $('Code in JavaScript3').item.json.mobileNumber }}",
+            "Session ID": "={{ $('Code in JavaScript3').item.json.sessionId }}",
+            "Routing Destination": "={{ $('Code in JavaScript3').item.json.route }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Mobile Number",
+              "displayName": "Mobile Number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Session ID",
+              "displayName": "Session ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Routing Destination",
+              "displayName": "Routing Destination",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -944,
+        352
+      ],
+      "id": "e58d2563-abca-45a7-8b7e-06b54d92fbb9",
+      "name": "Append row in sheet1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "VRRh3M0FvZKBrGW0",
+          "name": "kaminoor84"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "a73905db-5166-4cb2-b49f-a2a31f4f3ea4",
+                    "leftValue": "={{ $json['Routing Destination'] }}",
+                    "rightValue": "NewAppointmentBooking",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "225c0fa3-5364-49d9-b60b-8fdaec3e101f",
+                    "leftValue": "={{ $json['Routing Destination'] }}",
+                    "rightValue": "ReschedulingBooking",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "dd2874d0-e08a-4b87-9bee-d96aca87efa3",
+                    "leftValue": "={{ $json['Routing Destination'] }}",
+                    "rightValue": "CancellingBooking",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "a6b98ac0-93f9-4092-a64a-6cbd75f17f38",
+                    "leftValue": "={{ $json['Routing Destination'] }}",
+                    "rightValue": "Labforbooking",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "8082189d-db1d-4826-8b50-f57dfdc71d8f",
+                    "leftValue": "={{ $json['Routing Destination'] }}",
+                    "rightValue": "reception_123",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "d81e029c-4034-4f27-ac1b-5368866aaa5a",
+                    "leftValue": "={{ $json['Routing Destination'] }}",
+                    "rightValue": "reception_456",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "817b83fd-1866-4b7a-9258-14d0bb39bad2",
+                    "leftValue": "={{ $json['Routing Destination'] }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "string",
+                      "operation": "empty",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        -2080,
+        -432
+      ],
+      "id": "52c4a756-bb3e-45c6-ba10-9fcbdd7f698f",
+      "name": "Switch3"
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.url }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBearerAuth",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        -2752,
+        0
+      ],
+      "id": "778cbba8-d2c7-4f23-b97e-2b4b8e379088",
+      "name": "HTTP Request6",
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "UvpWGVsnm9UQHe7j",
+          "name": "Bearer Auth account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.groq.com/openai/v1/audio/transcriptions",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBearerAuth",
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "parameterType": "formBinaryData",
+              "name": "file",
+              "inputDataFieldName": "data"
+            },
+            {
+              "name": "model",
+              "value": "whisper-large-v3"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        -2560,
+        0
+      ],
+      "id": "60c80e47-df56-4c0e-ba53-c8a6a3c7d955",
+      "name": "HTTP Request7",
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "kePPL0JgLNNHCJiB",
+          "name": "Whisper groq API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "757ab8aa-9c65-45c9-a49e-b75bb7b1a207",
+              "leftValue": "={{ $('WhatsApp Trigger1').item.json.messages[0].type }}",
+              "rightValue": "audio",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -3056,
+        -320
+      ],
+      "id": "ef0aafbe-a3f9-4152-bdc8-6ecfd963a85a",
+      "name": "If2"
+    },
+    {
+      "parameters": {
+        "jsCode": "// 1. Check which input data actually arrived at this node\nconst incomingItems = $input.all();\nlet basePayload = {};\nif (incomingItems && incomingItems.length > 0) {\n  basePayload = incomingItems[0].json;\n}\n\n// 2. Access your Google Sheet row directly using standard n8n expression format\n// Sheet columns: Mobile Number | Session ID | Reception Number | Department\nlet sheetRow = {};\ntry {\n  sheetRow = $(\"Get Google Sheet Row\").first().json;\n} catch (e) {\n  sheetRow = {};\n}\n\n// 3. Extract the message text seamlessly based on which path was active\nlet finalMessage = basePayload[\"User Message\"] || basePayload[\"text\"] || \"\";\nlet messageType = basePayload[\"Message Type\"] || (basePayload[\"text\"] ? \"audio\" : \"text\");\n\n// 4. Return the consolidated output format your Switch3 node expects\nreturn [{\n  json: {\n    \"Mobile Number\": basePayload[\"Mobile Number\"] || sheetRow[\"Mobile Number\"] || \"\",\n    \"Routing Destination\": basePayload[\"Routing Destination\"] || sheetRow[\"Routing Destination\"] || \"\",\n    \"User Message\": finalMessage,\n    \"Message Type\": messageType,\n    \"Session ID\": basePayload[\"Session ID\"] || sheetRow[\"Session ID\"] || \"\"\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -2240,
+        -352
+      ],
+      "id": "de6a4a38-00a1-4ae1-8b7a-9edf423b2f9b",
+      "name": "Code in JavaScript2"
+    },
+    {
+      "parameters": {
+        "updates": [
+          "messages"
+        ],
+        "options": {}
+      },
+      "type": "n8n-nodes-base.whatsAppTrigger",
+      "typeVersion": 1,
+      "position": [
+        -3632,
+        -848
+      ],
+      "id": "620a2757-4461-4529-90bf-af6509407aa2",
+      "name": "WhatsApp Trigger1",
+      "webhookId": "2f793504-1d95-4ab6-9a4a-eaa79fa810fe",
+      "credentials": {
+        "whatsAppTriggerApi": {
+          "id": "NXsXlGJ98FeDnxBF",
+          "name": "WhatsApp OAuth account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "96c9a00e-2664-4168-a3d2-93038358a589",
+              "leftValue": "={{ $json['Routing Destination'] }}",
+              "rightValue": "Admin Department",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -3184,
+        -848
+      ],
+      "id": "bcf6012b-46fa-4848-85ff-3d8981a7b8a0",
+      "name": "If1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "212aec63-998c-4896-88f9-8d878d460256",
+              "name": "Mobile Number",
+              "value": "={{ $('WhatsApp Trigger1').item.json.messages[0].from }}",
+              "type": "string"
+            },
+            {
+              "id": "1338bd8b-6c91-4de7-99dc-f5d0137c52f0",
+              "name": "User Message",
+              "value": "={{ $json.text }}{{ $('WhatsApp Trigger1').item.json.messages[0].text.body }}",
+              "type": "string"
+            },
+            {
+              "id": "787a354d-5970-4197-9080-2512f14fc4c9",
+              "name": "Session ID",
+              "value": "={{ $('Session Manager').item.json['Session ID'] }}",
+              "type": "string"
+            },
+            {
+              "id": "990b6f01-87cd-45a6-be06-668152f4bf13",
+              "name": "Message Type",
+              "value": "={{ $('WhatsApp Trigger1').item.json.messages[0].type }}",
+              "type": "string"
+            },
+            {
+              "id": "dcfbcf87-b440-4b0c-8b67-389a7e668230",
+              "name": "Routing Destination",
+              "value": "={{ $('Session Manager').item.json['Routing Destination'] }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -2448,
+        -352
+      ],
+      "id": "8b3aff65-03b0-4aac-98d2-e6290de7572e",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {
+        "operation": "send",
+        "phoneNumberId": "1084926121366953",
+        "recipientPhoneNumber": "={{ $('WhatsApp Trigger1').item.json.messages[0].from }}",
+        "textBody": "Welcome to Pak International Hospital, Islamabad. Here are the services we offer \n \n1. New Appointment Booking \n2. Reschedule Appointment \n3. Cancel Appointment \n4. Lab Test Info \n5. Book Appointment for (Procedure) Lab Test \n6. General Query  \n\nPlease select the listed number and reply in text.",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.whatsApp",
+      "typeVersion": 1.1,
+      "position": [
+        -896,
+        -96
+      ],
+      "id": "9b1d16d0-baa2-4cfa-b656-4e6620b108ee",
+      "name": "Send message",
+      "webhookId": "c5c3f360-d6bc-48ef-8c82-a3d1c1853ec9",
+      "credentials": {
+        "whatsAppApi": {
+          "id": "GT5wOhx2SBmcTiBR",
+          "name": "60 Days Token"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "=hM1MKyG74nvsb2UJ",
+          "mode": "id",
+          "cachedResultUrl": "/workflow/=hM1MKyG74nvsb2UJ"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Session ID": "={{ $('Code in JavaScript3').item.json.sessionId }}",
+            "Mobile Number": "={{ $('Code in JavaScript3').item.json.mobileNumber }}",
+            "User Message": "={{ $('Code in JavaScript3').item.json.userMessage }}",
+            "Message Type": "={{ $('WhatsApp Trigger1').item.json.messages[0].type }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "User Message",
+              "displayName": "User Message",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Mobile Number",
+              "displayName": "Mobile Number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "Session ID",
+              "displayName": "Session ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "Message Type",
+              "displayName": "Message Type",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        -736,
+        352
+      ],
+      "id": "08dbe415-cfd2-4ef6-a174-353ef3e50312",
+      "name": "Receptionist 456"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "=Ke1JGAnGFwSyK44c",
+          "mode": "id",
+          "cachedResultUrl": "/workflow/=Ke1JGAnGFwSyK44c"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "User Message": "={{ $('Code in JavaScript2').item.json['User Message'] }}",
+            "Session ID": "={{ $('Code in JavaScript2').item.json['Session ID'] }}",
+            "Message Type": "={{ $('WhatsApp Trigger1').item.json.messages[0].type }}",
+            "Phone": "={{ $('WhatsApp Trigger1').item.json.messages[0].from }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "User Message",
+              "displayName": "User Message",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Phone",
+              "displayName": "Phone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "Session ID",
+              "displayName": "Session ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "Message Type",
+              "displayName": "Message Type",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        -1264,
+        -128
+      ],
+      "id": "6a70dc42-f5e4-4090-9f4b-7c4e8de72eb1",
+      "name": "Receptionist123"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "=Ke1JGAnGFwSyK44c",
+          "mode": "id",
+          "cachedResultUrl": "/workflow/=Ke1JGAnGFwSyK44c"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Session ID": "={{ $('Code in JavaScript3').item.json.sessionId }}",
+            "User Message": "={{ $('Code in JavaScript3').item.json.userMessage }}",
+            "Message Type": "={{ $('WhatsApp Trigger1').item.json.messages[0].type }}",
+            "Phone": "={{ $('Code in JavaScript3').item.json.mobileNumber }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "User Message",
+              "displayName": "User Message",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Phone",
+              "displayName": "Phone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "Session ID",
+              "displayName": "Session ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "Message Type",
+              "displayName": "Message Type",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        -736,
+        176
+      ],
+      "id": "0048dec3-af27-497a-b160-3dac29c5334a",
+      "name": "Receptionist 123"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "=hM1MKyG74nvsb2UJ",
+          "mode": "id",
+          "cachedResultUrl": "/workflow/=hM1MKyG74nvsb2UJ"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Mobile Number": "={{ $('Code in JavaScript2').item.json['Mobile Number'] }}",
+            "Session ID": "={{ $('Code in JavaScript2').item.json['Session ID'] }}",
+            "Message Type": "={{ $('WhatsApp Trigger1').item.json.messages[0].type }}",
+            "User Message": "={{ $('Code in JavaScript2').item.json['User Message'] }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "User Message",
+              "displayName": "User Message",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Mobile Number",
+              "displayName": "Mobile Number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "Session ID",
+              "displayName": "Session ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "Message Type",
+              "displayName": "Message Type",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        -1536,
+        -32
+      ],
+      "id": "15ff026c-aa53-4cf7-bdf2-ec1cb1ad2dae",
+      "name": "Receptionist456"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1Sjk9V1yNY3YCEpjfMzdWZR9AbOYfyhczdBDh0ACDkp0",
+          "mode": "list",
+          "cachedResultName": "Hospital Management System",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Sjk9V1yNY3YCEpjfMzdWZR9AbOYfyhczdBDh0ACDkp0/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 306517679,
+          "mode": "list",
+          "cachedResultName": "Session Manager",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Sjk9V1yNY3YCEpjfMzdWZR9AbOYfyhczdBDh0ACDkp0/edit#gid=306517679"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Mobile Number",
+              "lookupValue": "={{ $json.messages[0].from }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -3392,
+        -848
+      ],
+      "id": "5e816eb3-61e2-43f5-8d7c-54d0303650bb",
+      "name": "Session Manager",
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "VRRh3M0FvZKBrGW0",
+          "name": "kaminoor84"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "ujFmFq3p7t3Mc8JJ",
+          "mode": "id",
+          "cachedResultUrl": "/workflow/ujFmFq3p7t3Mc8JJ"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "query": "={{ $('Code in JavaScript2').item.json['User Message'] }}",
+            "Session ID": "={{ $('Code in JavaScript2').item.json['Session ID'] }}",
+            "Phone": "={{ $('Code in JavaScript2').item.json['Mobile Number'] }}",
+            "Message Type": "={{ $json['Message Type'] }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "query",
+              "displayName": "query",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Session ID",
+              "displayName": "Session ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "Phone",
+              "displayName": "Phone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "Message Type",
+              "displayName": "Message Type",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        -1408,
+        -272
+      ],
+      "id": "ae69e3ff-0f08-4d61-a3bb-0d92b5bb6348",
+      "name": "Call 'Lab 456'"
+    },
+    {
+      "parameters": {
+        "jsCode": "// 1. Grab incoming data from the trigger node\nconst inputData = $input.item.json;\n\n// Extract user message safely using brackets for spaces\nlet userMessage = (inputData[\"User Message\"] || inputData.userMessage || inputData.message || inputData.query || \"\").trim();\n\n// FIX: Added explicit bracket notation for space-separated \"Mobile Number\"\nlet mobileNumber = inputData[\"Mobile Number\"] || inputData.Phone || inputData.phone || inputData.mobile || \"\";\n\n// Normalize mobile number structure to 92 standard\nlet cleanMobile = mobileNumber.replace(/[^\\d]/g, '');\nif (cleanMobile.startsWith('0')) {\n    cleanMobile = '92' + cleanMobile.substring(1);\n} else if (!cleanMobile.startsWith('92') && cleanMobile.length > 0) {\n    cleanMobile = '92' + cleanMobile;\n}\n\n// 2. PRODUCTION GUARD: Strict validation for Session ID\nlet rawSessionId = inputData[\"Session ID\"] || inputData.sessionId || inputData.session_id;\nlet sessionId = \"\";\n\n// Force generation if the incoming session is missing, blank, or an explicit null object\nif (rawSessionId !== undefined && rawSessionId !== null && String(rawSessionId).trim() !== \"\" && String(rawSessionId) !== \"[null]\") {\n    sessionId = String(rawSessionId).trim();\n} else {\n    // Generate clean unique production stamp (Mobile + Date + Timestamp)\n    const now = new Date();\n    \n    // Format: YYYYMMDD\n    const year = now.getFullYear();\n    const month = String(now.getMonth() + 1).padStart(2, '0');\n    const day = String(now.getDate()).padStart(2, '0');\n    const dateStamp = `${year}${month}${day}`;\n    \n    // Format: HHMMSS\n    const hours = String(now.getHours()).padStart(2, '0');\n    const minutes = String(now.getMinutes()).padStart(2, '0');\n    const seconds = String(now.getSeconds()).padStart(2, '0');\n    const timeStamp = `${hours}${minutes}${seconds}`;\n    \n    // Use the cleaned mobile number or fallback gracefully\n    const trackingMobile = cleanMobile || \"NO_PHONE\";\n    \n    sessionId = `${trackingMobile}-${dateStamp}-${timeStamp}`;\n}\n\n// 3. Regular Expression Definitions for Routing\nconst greetingRegex = /^(hi|hello|aoa|salaam|hey|assalam|hi there)$/i;\nconst bookingOptions = /^[1-3]$/; // Matches 1, 2, or 3\nconst supportOptions = /^[4-6]$/; // Matches 4, 5, or 6\n\nlet route = \"show_menu\"; // Default fallback route\n\n// 4. ROUTING MATRIX ENGINE\nif (greetingRegex.test(userMessage)) {\n    route = \"show_menu\";\n} else if (bookingOptions.test(userMessage)) {\n    route = \"reception_123\"; \n} else if (supportOptions.test(userMessage)) {\n    route = \"reception_456\"; \n} else {\n    route = \"show_menu\";\n}\n\n// 5. Clean Outbound Data Payload\nreturn {\n    json: {\n        route: route,\n        sessionId: sessionId, \n        mobileNumber: cleanMobile, // <--- WILL NOW POPULATE CORRECTLY\n        userMessage: userMessage\n    }\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1696,
+        192
+      ],
+      "id": "100fdb70-94e8-433c-ab6f-96349ff0e522",
+      "name": "Code in JavaScript3"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.route }}",
+                    "rightValue": "show_menu",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "88f50611-fc7c-45fc-843f-f239374ad9e0"
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "722e7082-cc6b-4074-a560-edfafc4f0103",
+                    "leftValue": "={{ $json.route }}",
+                    "rightValue": "reception_123",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "b6c85db6-de5e-4969-8bc2-b1655b073bb9",
+                    "leftValue": "={{ $json.route }}",
+                    "rightValue": "reception_456",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        -1488,
+        192
+      ],
+      "id": "e968eb83-edf6-4bb7-92cc-e22169a5e24b",
+      "name": "Switch1"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "=btkoee9Byf5zGOCJ",
+          "mode": "id",
+          "cachedResultUrl": "/workflow/=btkoee9Byf5zGOCJ"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Phone": "={{ $('Code in JavaScript2').item.json['Mobile Number'] }}",
+            "query": "={{ $('Code in JavaScript2').item.json['User Message'] }}",
+            "Message Type": "={{ $('WhatsApp Trigger1').item.json.messages[0].type }}",
+            "Session ID": "={{ $('Code in JavaScript2').item.json['Session ID'] }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "query",
+              "displayName": "query",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Session ID",
+              "displayName": "Session ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "Phone",
+              "displayName": "Phone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "Message Type",
+              "displayName": "Message Type",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        -1696,
+        -704
+      ],
+      "id": "a7cefbaf-125c-4f9c-bd6d-4cdaa83196d8",
+      "name": "New Appointment"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "=u561k4qhSP3wVvrz",
+          "mode": "id",
+          "cachedResultUrl": "/workflow/=u561k4qhSP3wVvrz"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "query": "={{ $('Code in JavaScript2').item.json['User Message'] }}",
+            "Session ID": "={{ $('Code in JavaScript2').item.json['Session ID'] }}",
+            "Phone": "={{ $('Code in JavaScript2').item.json['Mobile Number'] }}",
+            "Message Type": "={{ $('WhatsApp Trigger1').item.json.messages[0].type }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "query",
+              "displayName": "query",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Session ID",
+              "displayName": "Session ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "Phone",
+              "displayName": "Phone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "Message Type",
+              "displayName": "Message Type",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        -1680,
+        -528
+      ],
+      "id": "30f27b64-ffea-4ac0-a4bc-9fab5a07a9df",
+      "name": "Rescheduling"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "=QDEOVV0QD2QE5ZBC",
+          "mode": "id",
+          "cachedResultUrl": "/workflow/=QDEOVV0QD2QE5ZBC"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Mobile Number": "={{ $('Code in JavaScript2').item.json['Mobile Number'] }}",
+            "query": "={{ $('Code in JavaScript2').item.json['User Message'] }}",
+            "Message Type": "={{ $('Code in JavaScript2').item.json['Message Type'] }}",
+            "Session ID": "={{ $('Code in JavaScript2').item.json['Session ID'] }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "query",
+              "displayName": "query",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Mobile Number",
+              "displayName": "Mobile Number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "Session ID",
+              "displayName": "Session ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "Message Type",
+              "displayName": "Message Type",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        -1600,
+        -384
+      ],
+      "id": "fd023456-b4f4-4ad3-b007-2f8303f8492a",
+      "name": "Execute Workflow"
+    },
+    {
+      "parameters": {
+        "jsCode": "// 1. Automatically grab data from whichever node is connected right before this one\nconst incomingData = $input.first().json;\n\n// 2. Safely extract the text string (handles 'output', 'chatInput', or 'value')\nlet rawText = incomingData.output || incomingData.chatInput || incomingData.value || \"\";\n\nlet matchedDepartment = \"\";\nconst validDays = [\"Monday\", \"Tuesday\", \"Wednesday\", \"Thursday\", \"Friday\", \"Saturday\", \"Sunday\"];\nlet finalDaysState = {\n    Monday: \"\", Tuesday: \"\", Wednesday: \"\", Thursday: \"\", Friday: \"\", Saturday: \"\", Sunday: \"\"\n};\n\nif (rawText) {\n    // Normalize literal '\\n' text strings into real line breaks\n    rawText = rawText.replace(/\\\\n/g, '\\n');\n    \n    // 3. Split into lines and parse line by line\n    const lines = rawText.split('\\n');\n    for (const line of lines) {\n        const cleanLine = line.trim();\n        \n        // Extract Department Name\n        if (cleanLine.toLowerCase().includes('department:')) {\n            matchedDepartment = cleanLine.split(':')[1].trim();\n        }\n        \n        // Extract Availability Days\n        for (let day of validDays) {\n            if (cleanLine.toLowerCase().startsWith(day.toLowerCase() + ':')) {\n                const value = cleanLine.split(':')[1].trim();\n                if (value.toLowerCase() === \"not available\") {\n                    finalDaysState[day] = \"Not Available\";\n                } else {\n                    finalDaysState[day] = \"\";\n                }\n            }\n        }\n    }\n}\n\n// 4. Output the cleanly parsed department and all 7 day variables dynamically\nreturn {\n    json: {\n        Department: matchedDepartment,\n        Monday: finalDaysState[\"Monday\"],\n        Tuesday: finalDaysState[\"Tuesday\"],\n        Wednesday: finalDaysState[\"Wednesday\"],\n        Thursday: finalDaysState[\"Thursday\"],\n        Friday: finalDaysState[\"Friday\"],\n        Saturday: finalDaysState[\"Saturday\"],\n        Sunday: finalDaysState[\"Sunday\"]\n    }\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -608,
+        -1104
+      ],
+      "id": "8994f541-4eb2-4d0f-8005-5b0c755ad83d",
+      "name": "Code in JavaScript1",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $('WhatsApp Trigger1').item.json.messages[0].from }}",
+        "contextWindowLength": 0
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        -832,
+        -816
+      ],
+      "id": "fb875b7d-a26f-44f2-ad08-cd5945203348",
+      "name": "Simple Memory1"
+    },
+    {
+      "parameters": {
+        "options": {
+          "temperature": 0
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        -944,
+        -832
+      ],
+      "id": "ea5d4cd7-755c-4a50-b49f-018054ef8662",
+      "name": "Google Gemini Chat Model1",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "icETtaRNX99UUPUM",
+          "name": "kaminoor"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "send",
+        "phoneNumberId": "1084926121366953",
+        "recipientPhoneNumber": "={{ $('WhatsApp Trigger1').item.json.messages[0].from }}",
+        "textBody": "=The requested day status has been updated successfully.",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.whatsApp",
+      "typeVersion": 1.1,
+      "position": [
+        688,
+        -1072
+      ],
+      "id": "b4c50938-13de-4706-bbcc-da563cb83b68",
+      "name": "Send message1",
+      "webhookId": "9605b5b7-0d78-4154-bff6-274ea516a2ab",
+      "credentials": {
+        "whatsAppApi": {
+          "id": "GT5wOhx2SBmcTiBR",
+          "name": "60 Days Token"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1Sjk9V1yNY3YCEpjfMzdWZR9AbOYfyhczdBDh0ACDkp0",
+          "mode": "list",
+          "cachedResultName": "Hospital Management System",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Sjk9V1yNY3YCEpjfMzdWZR9AbOYfyhczdBDh0ACDkp0/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 756143892,
+          "mode": "list",
+          "cachedResultName": "Admin Deptt",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Sjk9V1yNY3YCEpjfMzdWZR9AbOYfyhczdBDh0ACDkp0/edit#gid=756143892"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Mobile Number",
+              "lookupValue": "={{ $json['Mobile Number'] }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -2192,
+        -1472
+      ],
+      "id": "26a112c5-2c79-4a95-aaf0-0b3dba06e96c",
+      "name": "Get row(s) in sheet5",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "VRRh3M0FvZKBrGW0",
+          "name": "kaminoor84"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1Sjk9V1yNY3YCEpjfMzdWZR9AbOYfyhczdBDh0ACDkp0",
+          "mode": "list",
+          "cachedResultName": "Hospital Management System",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Sjk9V1yNY3YCEpjfMzdWZR9AbOYfyhczdBDh0ACDkp0/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1161826852,
+          "mode": "list",
+          "cachedResultName": "Cardiology Department",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Sjk9V1yNY3YCEpjfMzdWZR9AbOYfyhczdBDh0ACDkp0/edit#gid=1161826852"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Department",
+              "lookupValue": "={{ $json.Department }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -1744,
+        -1792
+      ],
+      "id": "87902a2a-3056-44b7-ba0e-3d30d9fc60e5",
+      "name": "Cardiology",
+      "alwaysOutputData": false,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "VRRh3M0FvZKBrGW0",
+          "name": "kaminoor84"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1Sjk9V1yNY3YCEpjfMzdWZR9AbOYfyhczdBDh0ACDkp0",
+          "mode": "list",
+          "cachedResultName": "Hospital Management System",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Sjk9V1yNY3YCEpjfMzdWZR9AbOYfyhczdBDh0ACDkp0/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 2014468765,
+          "mode": "list",
+          "cachedResultName": "Medical Specialist",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Sjk9V1yNY3YCEpjfMzdWZR9AbOYfyhczdBDh0ACDkp0/edit#gid=2014468765"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Department",
+              "lookupValue": "={{ $json.Department }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -1744,
+        -1200
+      ],
+      "id": "9dcaa47f-aa3f-489f-8d0b-428d351b33e8",
+      "name": "Medical Specialist",
+      "alwaysOutputData": false,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "VRRh3M0FvZKBrGW0",
+          "name": "kaminoor84"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1Sjk9V1yNY3YCEpjfMzdWZR9AbOYfyhczdBDh0ACDkp0",
+          "mode": "list",
+          "cachedResultName": "Hospital Management System",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Sjk9V1yNY3YCEpjfMzdWZR9AbOYfyhczdBDh0ACDkp0/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 451170272,
+          "mode": "list",
+          "cachedResultName": "Neurology Department",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Sjk9V1yNY3YCEpjfMzdWZR9AbOYfyhczdBDh0ACDkp0/edit#gid=451170272"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Department",
+              "lookupValue": "={{ $json.Department }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -1744,
+        -1648
+      ],
+      "id": "76a41386-fc09-4151-97a2-06b45013881c",
+      "name": "Neurology",
+      "alwaysOutputData": false,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "VRRh3M0FvZKBrGW0",
+          "name": "kaminoor84"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1Sjk9V1yNY3YCEpjfMzdWZR9AbOYfyhczdBDh0ACDkp0",
+          "mode": "list",
+          "cachedResultName": "Hospital Management System",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Sjk9V1yNY3YCEpjfMzdWZR9AbOYfyhczdBDh0ACDkp0/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 902655188,
+          "mode": "list",
+          "cachedResultName": "Gynecology Department",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Sjk9V1yNY3YCEpjfMzdWZR9AbOYfyhczdBDh0ACDkp0/edit#gid=902655188"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Department",
+              "lookupValue": "={{ $json.Department }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -1744,
+        -1344
+      ],
+      "id": "ee41e114-b8ec-448e-9bc7-6db01ab0fea9",
+      "name": "Gynecology",
+      "alwaysOutputData": false,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "VRRh3M0FvZKBrGW0",
+          "name": "kaminoor84"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.Department }}",
+                    "rightValue": "Cardiology",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "05d3ba53-6ac4-4665-a569-60cee157d7c0"
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "22d1ecce-e26e-4aae-a6f0-58ef0cefb3e7",
+                    "leftValue": "={{ $json.Department }}",
+                    "rightValue": "Neurology",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "d1b2dada-6f9e-4e5f-9491-d1d04dbdb62d",
+                    "leftValue": "={{ $json.Department }}",
+                    "rightValue": "Gastroenterology",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "9d964bb8-589f-486f-b1aa-c0462d770396",
+                    "leftValue": "={{ $json.Department }}",
+                    "rightValue": "Gynecology",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "7425265e-d6c7-4e83-857c-5990815d85a5",
+                    "leftValue": "={{ $json.Department }}",
+                    "rightValue": "Medical Specialist",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        -2048,
+        -1520
+      ],
+      "id": "b38a1027-9dde-40bf-8fcd-23adb6c877f9",
+      "name": "Switch2"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1Sjk9V1yNY3YCEpjfMzdWZR9AbOYfyhczdBDh0ACDkp0",
+          "mode": "list",
+          "cachedResultName": "Hospital Management System",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Sjk9V1yNY3YCEpjfMzdWZR9AbOYfyhczdBDh0ACDkp0/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1203119987,
+          "mode": "list",
+          "cachedResultName": "Gastroenterology Department",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Sjk9V1yNY3YCEpjfMzdWZR9AbOYfyhczdBDh0ACDkp0/edit#gid=1203119987"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Department",
+              "lookupValue": "={{ $json.Department }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -1744,
+        -1488
+      ],
+      "id": "7fd613d3-7021-4c07-b30f-9efa02c72a52",
+      "name": "Gastroenterology",
+      "alwaysOutputData": false,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "VRRh3M0FvZKBrGW0",
+          "name": "kaminoor84"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineAll",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        -1216,
+        -1104
+      ],
+      "id": "f7458b36-4fc8-486c-8610-b980a2548139",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Doctor Message: {{ $('WhatsApp Trigger1').item.json.messages[0].text.body }} \nDepartment: {{ $json.Department }}\nMonday: {{ $json.Monday }}\nTuesday: {{ $json.Tuesday }}\nWednesday: {{ $json.Wednesday }}\nThursday: {{ $json.Thursday }}\nFriday: {{ $json.Friday }}\nSaturday: {{ $json.Saturday }}\n",
+        "options": {
+          "systemMessage": "=Purpose of this setup:\nThis is a setup where we update the google sheet with status \"Not Available\" when a doctor send a message.\n\nCurrent System Date/Time Context:\n- Today is: {{ $today.format('EEEE, LLLL d, yyyy') }}\n- Current Time: {{ $now.format('HH:mm') }}\n- Reference Timezone: Asia/Karachi (PKT)\n\nLinguistic Parsing Rules:\nAnalyze relative time keywords based strictly on the current context provided above:\n1. \"today\" -> Calculate and output the exact day name of {{ $today.format('EEEE') }}.\n2. \"tomorrow\" -> Calculate and output the exact day name of the next day: {{ $today.plus({ days: 1 }).format('EEEE') }}.\n3. \"the day after tomorrow\" -> Calculate and output the exact day name of two days from now: {{ $today.plus({ days: 2 }).format('EEEE') }}.\n4. Specific Day Name (e.g., \"Friday\", \"Monday\") -> Output that day name directly.\nYour Role:\nYou are Admin Assistant of a Hospital and your duty is to see the following data from Users Message,\n\n1. Day Name from conversaion (Doctor Message)\n2. Monday\n3. Tuesday\n4. Wednesday\n5. Thursday\n6. Friday\n7. Saturday\n8. Department\n\nUse of Data: After collecting data carefully from Users Prompt, extract Day Name and its status (Not Available), send the output block\n\nDepartment: [Department]\nMonday: [Status]\nTuesday: [Status]\nWednesday: [Status]\nThursday: [Status]\nFriday: [Status]\nSaturday: [Status]\n\n\nStrict Rule: \nIf any Day status is blank, output it blank.\nIf any Day Status has already value like \"Not Avaialbe\" output it as it is.\nYour duty is only to put the status of \"Not Available\" on subjected day using Day Name from Dorctor Message. \n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        -944,
+        -1104
+      ],
+      "id": "9c17df98-f152-41e0-ac86-8aa46a31cbcf",
+      "name": "AI Agent2"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1Sjk9V1yNY3YCEpjfMzdWZR9AbOYfyhczdBDh0ACDkp0",
+          "mode": "list",
+          "cachedResultName": "Hospital Management System",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Sjk9V1yNY3YCEpjfMzdWZR9AbOYfyhczdBDh0ACDkp0/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 451170272,
+          "mode": "list",
+          "cachedResultName": "Neurology Department",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Sjk9V1yNY3YCEpjfMzdWZR9AbOYfyhczdBDh0ACDkp0/edit#gid=451170272"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Monday": "={{ $('Code in JavaScript1').item.json.Monday }}",
+            "ID": "={{ $('Merge').item.json.ID }}",
+            "Tuesday": "={{ $('Code in JavaScript1').item.json.Tuesday }}",
+            "Wednesday": "={{ $('Code in JavaScript1').item.json.Wednesday }}",
+            "Thursday": "={{ $('Code in JavaScript1').item.json.Thursday }}",
+            "Friday": "={{ $('Code in JavaScript1').item.json.Friday }}",
+            "Saturday": "={{ $('Code in JavaScript1').item.json.Saturday }}"
+          },
+          "matchingColumns": [
+            "ID"
+          ],
+          "schema": [
+            {
+              "id": "ID",
+              "displayName": "ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Department",
+              "displayName": "Department",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Doctor_Name",
+              "displayName": "Doctor_Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Monday",
+              "displayName": "Monday",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Tuesday",
+              "displayName": "Tuesday",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Wednesday",
+              "displayName": "Wednesday",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Thursday",
+              "displayName": "Thursday",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Friday",
+              "displayName": "Friday",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Saturday",
+              "displayName": "Saturday",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Start Time",
+              "displayName": "Start Time",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "End Time",
+              "displayName": "End Time",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Fee",
+              "displayName": "Fee",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        176,
+        -1232
+      ],
+      "id": "85a1ba39-13a8-4429-8959-53358a06b881",
+      "name": "Neurology1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "VRRh3M0FvZKBrGW0",
+          "name": "kaminoor84"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.Department }}",
+                    "rightValue": "Cardiology",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "05d3ba53-6ac4-4665-a569-60cee157d7c0"
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "22d1ecce-e26e-4aae-a6f0-58ef0cefb3e7",
+                    "leftValue": "={{ $json.Department }}",
+                    "rightValue": "Neurology",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "d1b2dada-6f9e-4e5f-9491-d1d04dbdb62d",
+                    "leftValue": "={{ $json.Department }}",
+                    "rightValue": "Gastroenterology",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "9d964bb8-589f-486f-b1aa-c0462d770396",
+                    "leftValue": "={{ $json.Department }}",
+                    "rightValue": "Gynecology",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "7425265e-d6c7-4e83-857c-5990815d85a5",
+                    "leftValue": "={{ $json.Department }}",
+                    "rightValue": "Medical Specialist",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        -368,
+        -1152
+      ],
+      "id": "c543a4dc-1169-4d0b-acd5-6ce08309a335",
+      "name": "Switch4"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1Sjk9V1yNY3YCEpjfMzdWZR9AbOYfyhczdBDh0ACDkp0",
+          "mode": "list",
+          "cachedResultName": "Hospital Management System",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Sjk9V1yNY3YCEpjfMzdWZR9AbOYfyhczdBDh0ACDkp0/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1161826852,
+          "mode": "list",
+          "cachedResultName": "Cardiology Department",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Sjk9V1yNY3YCEpjfMzdWZR9AbOYfyhczdBDh0ACDkp0/edit#gid=1161826852"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Monday": "={{ $('Code in JavaScript1').item.json.Monday }}",
+            "ID": "={{ $('Merge').item.json.ID }}",
+            "Tuesday": "={{ $('Code in JavaScript1').item.json.Tuesday }}",
+            "Wednesday": "={{ $('Code in JavaScript1').item.json.Wednesday }}",
+            "Thursday": "={{ $('Code in JavaScript1').item.json.Thursday }}",
+            "Friday": "={{ $('Code in JavaScript1').item.json.Friday }}",
+            "Saturday": "={{ $('Code in JavaScript1').item.json.Saturday }}"
+          },
+          "matchingColumns": [
+            "ID"
+          ],
+          "schema": [
+            {
+              "id": "ID",
+              "displayName": "ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Department",
+              "displayName": "Department",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Doctor_Name",
+              "displayName": "Doctor_Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Monday",
+              "displayName": "Monday",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Tuesday",
+              "displayName": "Tuesday",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Wednesday",
+              "displayName": "Wednesday",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Thursday",
+              "displayName": "Thursday",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Friday",
+              "displayName": "Friday",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Saturday",
+              "displayName": "Saturday",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Start Time",
+              "displayName": "Start Time",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "End Time",
+              "displayName": "End Time",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Fee",
+              "displayName": "Fee",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        176,
+        -1408
+      ],
+      "id": "224e30cb-2ec1-4ee8-a1c6-aa6c279529e5",
+      "name": "Cardiology2",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "VRRh3M0FvZKBrGW0",
+          "name": "kaminoor84"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1Sjk9V1yNY3YCEpjfMzdWZR9AbOYfyhczdBDh0ACDkp0",
+          "mode": "list",
+          "cachedResultName": "Hospital Management System",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Sjk9V1yNY3YCEpjfMzdWZR9AbOYfyhczdBDh0ACDkp0/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1203119987,
+          "mode": "list",
+          "cachedResultName": "Gastroenterology Department",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Sjk9V1yNY3YCEpjfMzdWZR9AbOYfyhczdBDh0ACDkp0/edit#gid=1203119987"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Monday": "={{ $('Code in JavaScript1').item.json.Monday }}",
+            "ID": "={{ $('Merge').item.json.ID }}",
+            "Tuesday": "={{ $('Code in JavaScript1').item.json.Tuesday }}",
+            "Wednesday": "={{ $('Code in JavaScript1').item.json.Wednesday }}",
+            "Thursday": "={{ $('Code in JavaScript1').item.json.Thursday }}",
+            "Friday": "={{ $('Code in JavaScript1').item.json.Friday }}",
+            "Saturday": "={{ $('Code in JavaScript1').item.json.Saturday }}"
+          },
+          "matchingColumns": [
+            "ID"
+          ],
+          "schema": [
+            {
+              "id": "ID",
+              "displayName": "ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Department",
+              "displayName": "Department",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Doctor_Name",
+              "displayName": "Doctor_Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Monday",
+              "displayName": "Monday",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Tuesday",
+              "displayName": "Tuesday",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Wednesday",
+              "displayName": "Wednesday",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Thursday",
+              "displayName": "Thursday",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Friday",
+              "displayName": "Friday",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Saturday",
+              "displayName": "Saturday",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Start Time",
+              "displayName": "Start Time",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "End Time",
+              "displayName": "End Time",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Fee",
+              "displayName": "Fee",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        176,
+        -1072
+      ],
+      "id": "703f59ba-7c6f-4d06-a3eb-826a28641a50",
+      "name": "Gastroenterology1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "VRRh3M0FvZKBrGW0",
+          "name": "kaminoor84"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1Sjk9V1yNY3YCEpjfMzdWZR9AbOYfyhczdBDh0ACDkp0",
+          "mode": "list",
+          "cachedResultName": "Hospital Management System",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Sjk9V1yNY3YCEpjfMzdWZR9AbOYfyhczdBDh0ACDkp0/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 902655188,
+          "mode": "list",
+          "cachedResultName": "Gynecology Department",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Sjk9V1yNY3YCEpjfMzdWZR9AbOYfyhczdBDh0ACDkp0/edit#gid=902655188"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Monday": "={{ $('Code in JavaScript1').item.json.Monday }}",
+            "ID": "={{ $('Merge').item.json.ID }}",
+            "Tuesday": "={{ $('Code in JavaScript1').item.json.Tuesday }}",
+            "Wednesday": "={{ $('Code in JavaScript1').item.json.Wednesday }}",
+            "Thursday": "={{ $('Code in JavaScript1').item.json.Thursday }}",
+            "Friday": "={{ $('Code in JavaScript1').item.json.Friday }}",
+            "Saturday": "={{ $('Code in JavaScript1').item.json.Saturday }}"
+          },
+          "matchingColumns": [
+            "ID"
+          ],
+          "schema": [
+            {
+              "id": "ID",
+              "displayName": "ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Department",
+              "displayName": "Department",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Doctor_Name",
+              "displayName": "Doctor_Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Monday",
+              "displayName": "Monday",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Tuesday",
+              "displayName": "Tuesday",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Wednesday",
+              "displayName": "Wednesday",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Thursday",
+              "displayName": "Thursday",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Friday",
+              "displayName": "Friday",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Saturday",
+              "displayName": "Saturday",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Start Time",
+              "displayName": "Start Time",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "End Time",
+              "displayName": "End Time",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Fee",
+              "displayName": "Fee",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        176,
+        -896
+      ],
+      "id": "d7aaad17-af44-4c07-92d5-b8128a7aa7c1",
+      "name": "Gynecology1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "VRRh3M0FvZKBrGW0",
+          "name": "kaminoor84"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1Sjk9V1yNY3YCEpjfMzdWZR9AbOYfyhczdBDh0ACDkp0",
+          "mode": "list",
+          "cachedResultName": "Hospital Management System",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Sjk9V1yNY3YCEpjfMzdWZR9AbOYfyhczdBDh0ACDkp0/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 2014468765,
+          "mode": "list",
+          "cachedResultName": "Medical Specialist",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Sjk9V1yNY3YCEpjfMzdWZR9AbOYfyhczdBDh0ACDkp0/edit#gid=2014468765"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Monday": "={{ $('Code in JavaScript1').item.json.Monday }}",
+            "ID": "={{ $('Merge').item.json.ID }}",
+            "Tuesday": "={{ $('Code in JavaScript1').item.json.Tuesday }}",
+            "Wednesday": "={{ $('Code in JavaScript1').item.json.Wednesday }}",
+            "Thursday": "={{ $('Code in JavaScript1').item.json.Thursday }}",
+            "Friday": "={{ $('Code in JavaScript1').item.json.Friday }}",
+            "Saturday": "={{ $('Code in JavaScript1').item.json.Saturday }}"
+          },
+          "matchingColumns": [
+            "ID"
+          ],
+          "schema": [
+            {
+              "id": "ID",
+              "displayName": "ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Department",
+              "displayName": "Department",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Doctor_Name",
+              "displayName": "Doctor_Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Monday",
+              "displayName": "Monday",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Tuesday",
+              "displayName": "Tuesday",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Wednesday",
+              "displayName": "Wednesday",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Thursday",
+              "displayName": "Thursday",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Friday",
+              "displayName": "Friday",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Saturday",
+              "displayName": "Saturday",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Start Time",
+              "displayName": "Start Time",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "End Time",
+              "displayName": "End Time",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Fee",
+              "displayName": "Fee",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        176,
+        -720
+      ],
+      "id": "e5e090c4-e4e3-47b2-b10c-86e9d98d084b",
+      "name": "Medical Specialist1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "VRRh3M0FvZKBrGW0",
+          "name": "kaminoor84"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes",
+              "minutesInterval": 1
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -1040,
+        -1920
+      ],
+      "id": "4a755782-9e6e-469d-afc8-187d96be647d",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1Sjk9V1yNY3YCEpjfMzdWZR9AbOYfyhczdBDh0ACDkp0",
+          "mode": "list",
+          "cachedResultName": "Hospital Management System",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Sjk9V1yNY3YCEpjfMzdWZR9AbOYfyhczdBDh0ACDkp0/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 2014468765,
+          "mode": "list",
+          "cachedResultName": "Medical Specialist",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Sjk9V1yNY3YCEpjfMzdWZR9AbOYfyhczdBDh0ACDkp0/edit#gid=2014468765"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "ID": "={{ $json.ID }}",
+            "Monday": "={{ $json.Monday }}",
+            "Tuesday": "={{ $json.Tuesday }}",
+            "Wednesday": "={{ $json.Wednesday }}",
+            "Thursday": "={{ $json.Thursday }}",
+            "Friday": "={{ $json.Friday }}",
+            "Saturday": "={{ $json.Saturday }}"
+          },
+          "matchingColumns": [
+            "ID"
+          ],
+          "schema": [
+            {
+              "id": "ID",
+              "displayName": "ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Department",
+              "displayName": "Department",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Doctor_Name",
+              "displayName": "Doctor_Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Monday",
+              "displayName": "Monday",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Tuesday",
+              "displayName": "Tuesday",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Wednesday",
+              "displayName": "Wednesday",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Thursday",
+              "displayName": "Thursday",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Friday",
+              "displayName": "Friday",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Saturday",
+              "displayName": "Saturday",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Start Time",
+              "displayName": "Start Time",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "End Time",
+              "displayName": "End Time",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Fee",
+              "displayName": "Fee",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -48,
+        -1600
+      ],
+      "id": "dc6cf20f-1ca1-4434-8714-d703befdd7b3",
+      "name": "Update row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "VRRh3M0FvZKBrGW0",
+          "name": "kaminoor84"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// 1. Get the current day name dynamically (e.g., \"Monday\", \"Tuesday\")\nconst daysOfWeek = [\"Sunday\", \"Monday\", \"Tuesday\", \"Wednesday\", \"Thursday\", \"Friday\", \"Saturday\"];\nconst todayIndex = new Date().getDay(); \nconst todayName = daysOfWeek[todayIndex];\n\nconst items = $input.all();\nconst updatedItems = [];\n\n// 2. Loop through every doctor record fetched from the sheet\nfor (const item of items) {\n    let row = { ...item.json };\n    \n    // Check if TODAY's column specifically is marked as 'Not Available'\n    if (row[todayName] && row[todayName].toLowerCase().trim() === 'not available') {\n        row[todayName] = \"\"; // Reset ONLY today's cell to blank\n        \n        updatedItems.push({ json: row }); // Only pass forward rows that need updating\n    }\n}\n\n// 3. Forward only the modified rows to avoid wasting Google Sheet API quota\nreturn updatedItems;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -288,
+        -2288
+      ],
+      "id": "6f3c66ac-c14d-4ba2-9aec-12dbbc7b4b21",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1Sjk9V1yNY3YCEpjfMzdWZR9AbOYfyhczdBDh0ACDkp0",
+          "mode": "list",
+          "cachedResultName": "Hospital Management System",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Sjk9V1yNY3YCEpjfMzdWZR9AbOYfyhczdBDh0ACDkp0/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 2014468765,
+          "mode": "list",
+          "cachedResultName": "Medical Specialist",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Sjk9V1yNY3YCEpjfMzdWZR9AbOYfyhczdBDh0ACDkp0/edit#gid=2014468765"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -560,
+        -1600
+      ],
+      "id": "5a882415-bee0-4aa8-a3ac-4e7e6ed8d74f",
+      "name": "Medical Specialist2",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "VRRh3M0FvZKBrGW0",
+          "name": "kaminoor84"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1Sjk9V1yNY3YCEpjfMzdWZR9AbOYfyhczdBDh0ACDkp0",
+          "mode": "list",
+          "cachedResultName": "Hospital Management System",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Sjk9V1yNY3YCEpjfMzdWZR9AbOYfyhczdBDh0ACDkp0/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 902655188,
+          "mode": "list",
+          "cachedResultName": "Gynecology Department",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Sjk9V1yNY3YCEpjfMzdWZR9AbOYfyhczdBDh0ACDkp0/edit#gid=902655188"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -560,
+        -1776
+      ],
+      "id": "0eed15e1-377d-4350-ab5f-42e8d45ec1db",
+      "name": "Gynecology2",
+      "alwaysOutputData": false,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "VRRh3M0FvZKBrGW0",
+          "name": "kaminoor84"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1Sjk9V1yNY3YCEpjfMzdWZR9AbOYfyhczdBDh0ACDkp0",
+          "mode": "list",
+          "cachedResultName": "Hospital Management System",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Sjk9V1yNY3YCEpjfMzdWZR9AbOYfyhczdBDh0ACDkp0/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1203119987,
+          "mode": "list",
+          "cachedResultName": "Gastroenterology Department",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Sjk9V1yNY3YCEpjfMzdWZR9AbOYfyhczdBDh0ACDkp0/edit#gid=1203119987"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -576,
+        -1936
+      ],
+      "id": "72a3a170-fc6e-4c4f-a8bb-c4d3073fc074",
+      "name": "Gastroenterology2",
+      "alwaysOutputData": false,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "VRRh3M0FvZKBrGW0",
+          "name": "kaminoor84"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1Sjk9V1yNY3YCEpjfMzdWZR9AbOYfyhczdBDh0ACDkp0",
+          "mode": "list",
+          "cachedResultName": "Hospital Management System",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Sjk9V1yNY3YCEpjfMzdWZR9AbOYfyhczdBDh0ACDkp0/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 451170272,
+          "mode": "list",
+          "cachedResultName": "Neurology Department",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Sjk9V1yNY3YCEpjfMzdWZR9AbOYfyhczdBDh0ACDkp0/edit#gid=451170272"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -576,
+        -2112
+      ],
+      "id": "fd7e31c5-bdb1-4026-b117-f2d8725c9282",
+      "name": "Neurology2",
+      "alwaysOutputData": false,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "VRRh3M0FvZKBrGW0",
+          "name": "kaminoor84"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1Sjk9V1yNY3YCEpjfMzdWZR9AbOYfyhczdBDh0ACDkp0",
+          "mode": "list",
+          "cachedResultName": "Hospital Management System",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Sjk9V1yNY3YCEpjfMzdWZR9AbOYfyhczdBDh0ACDkp0/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1161826852,
+          "mode": "list",
+          "cachedResultName": "Cardiology Department",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Sjk9V1yNY3YCEpjfMzdWZR9AbOYfyhczdBDh0ACDkp0/edit#gid=1161826852"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -592,
+        -2288
+      ],
+      "id": "58051395-e842-45ee-80f9-64092a8eceb6",
+      "name": "Cardiology1",
+      "alwaysOutputData": false,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "VRRh3M0FvZKBrGW0",
+          "name": "kaminoor84"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// 1. Get the current day name dynamically (e.g., \"Monday\", \"Tuesday\")\nconst daysOfWeek = [\"Sunday\", \"Monday\", \"Tuesday\", \"Wednesday\", \"Thursday\", \"Friday\", \"Saturday\"];\nconst todayIndex = new Date().getDay(); \nconst todayName = daysOfWeek[todayIndex];\n\nconst items = $input.all();\nconst updatedItems = [];\n\n// 2. Loop through every doctor record fetched from the sheet\nfor (const item of items) {\n    let row = { ...item.json };\n    \n    // Check if TODAY's column specifically is marked as 'Not Available'\n    if (row[todayName] && row[todayName].toLowerCase().trim() === 'not available') {\n        row[todayName] = \"\"; // Reset ONLY today's cell to blank\n        \n        updatedItems.push({ json: row }); // Only pass forward rows that need updating\n    }\n}\n\n// 3. Forward only the modified rows to avoid wasting Google Sheet API quota\nreturn updatedItems;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -304,
+        -2112
+      ],
+      "id": "eb62266f-902c-4045-804b-5285ac0254a6",
+      "name": "Code in JavaScript4"
+    },
+    {
+      "parameters": {
+        "jsCode": "// 1. Get the current day name dynamically (e.g., \"Monday\", \"Tuesday\")\nconst daysOfWeek = [\"Sunday\", \"Monday\", \"Tuesday\", \"Wednesday\", \"Thursday\", \"Friday\", \"Saturday\"];\nconst todayIndex = new Date().getDay(); \nconst todayName = daysOfWeek[todayIndex];\n\nconst items = $input.all();\nconst updatedItems = [];\n\n// 2. Loop through every doctor record fetched from the sheet\nfor (const item of items) {\n    let row = { ...item.json };\n    \n    // Check if TODAY's column specifically is marked as 'Not Available'\n    if (row[todayName] && row[todayName].toLowerCase().trim() === 'not available') {\n        row[todayName] = \"\"; // Reset ONLY today's cell to blank\n        \n        updatedItems.push({ json: row }); // Only pass forward rows that need updating\n    }\n}\n\n// 3. Forward only the modified rows to avoid wasting Google Sheet API quota\nreturn updatedItems;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -304,
+        -1936
+      ],
+      "id": "8b395c31-04ab-4873-977d-ba6707f8981a",
+      "name": "Code in JavaScript5"
+    },
+    {
+      "parameters": {
+        "jsCode": "// 1. Get the current day name dynamically (e.g., \"Monday\", \"Tuesday\")\nconst daysOfWeek = [\"Sunday\", \"Monday\", \"Tuesday\", \"Wednesday\", \"Thursday\", \"Friday\", \"Saturday\"];\nconst todayIndex = new Date().getDay(); \nconst todayName = daysOfWeek[todayIndex];\n\nconst items = $input.all();\nconst updatedItems = [];\n\n// 2. Loop through every doctor record fetched from the sheet\nfor (const item of items) {\n    let row = { ...item.json };\n    \n    // Check if TODAY's column specifically is marked as 'Not Available'\n    if (row[todayName] && row[todayName].toLowerCase().trim() === 'not available') {\n        row[todayName] = \"\"; // Reset ONLY today's cell to blank\n        \n        updatedItems.push({ json: row }); // Only pass forward rows that need updating\n    }\n}\n\n// 3. Forward only the modified rows to avoid wasting Google Sheet API quota\nreturn updatedItems;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -288,
+        -1776
+      ],
+      "id": "4201c06c-443c-4719-b65d-1646e4bf6480",
+      "name": "Code in JavaScript6"
+    },
+    {
+      "parameters": {
+        "jsCode": "// 1. Get the current day name dynamically (e.g., \"Monday\", \"Tuesday\")\nconst daysOfWeek = [\"Sunday\", \"Monday\", \"Tuesday\", \"Wednesday\", \"Thursday\", \"Friday\", \"Saturday\"];\nconst todayIndex = new Date().getDay(); \nconst todayName = daysOfWeek[todayIndex];\n\nconst items = $input.all();\nconst updatedItems = [];\n\n// 2. Loop through every doctor record fetched from the sheet\nfor (const item of items) {\n    let row = { ...item.json };\n    \n    // Check if TODAY's column specifically is marked as 'Not Available'\n    if (row[todayName] && row[todayName].toLowerCase().trim() === 'not available') {\n        row[todayName] = \"\"; // Reset ONLY today's cell to blank\n        \n        updatedItems.push({ json: row }); // Only pass forward rows that need updating\n    }\n}\n\n// 3. Forward only the modified rows to avoid wasting Google Sheet API quota\nreturn updatedItems;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -288,
+        -1600
+      ],
+      "id": "55bac4f5-9d84-47ff-8bed-37eb9ad8ff07",
+      "name": "Code in JavaScript7"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1Sjk9V1yNY3YCEpjfMzdWZR9AbOYfyhczdBDh0ACDkp0",
+          "mode": "list",
+          "cachedResultName": "Hospital Management System",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Sjk9V1yNY3YCEpjfMzdWZR9AbOYfyhczdBDh0ACDkp0/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 902655188,
+          "mode": "list",
+          "cachedResultName": "Gynecology Department",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Sjk9V1yNY3YCEpjfMzdWZR9AbOYfyhczdBDh0ACDkp0/edit#gid=902655188"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "ID": "={{ $json.ID }}",
+            "Monday": "={{ $json.Monday }}",
+            "Tuesday": "={{ $json.Tuesday }}",
+            "Wednesday": "={{ $json.Wednesday }}",
+            "Thursday": "={{ $json.Thursday }}",
+            "Friday": "={{ $json.Friday }}",
+            "Saturday": "={{ $json.Saturday }}"
+          },
+          "matchingColumns": [
+            "ID"
+          ],
+          "schema": [
+            {
+              "id": "ID",
+              "displayName": "ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Department",
+              "displayName": "Department",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Doctor_Name",
+              "displayName": "Doctor_Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Monday",
+              "displayName": "Monday",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Tuesday",
+              "displayName": "Tuesday",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Wednesday",
+              "displayName": "Wednesday",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Thursday",
+              "displayName": "Thursday",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Friday",
+              "displayName": "Friday",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Saturday",
+              "displayName": "Saturday",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Start Time",
+              "displayName": "Start Time",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "End Time",
+              "displayName": "End Time",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Fee",
+              "displayName": "Fee",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -48,
+        -1776
+      ],
+      "id": "a5829ceb-35cd-44bb-ab4a-8d9d39b954c8",
+      "name": "Update row in sheet1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "VRRh3M0FvZKBrGW0",
+          "name": "kaminoor84"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1Sjk9V1yNY3YCEpjfMzdWZR9AbOYfyhczdBDh0ACDkp0",
+          "mode": "list",
+          "cachedResultName": "Hospital Management System",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Sjk9V1yNY3YCEpjfMzdWZR9AbOYfyhczdBDh0ACDkp0/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1203119987,
+          "mode": "list",
+          "cachedResultName": "Gastroenterology Department",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Sjk9V1yNY3YCEpjfMzdWZR9AbOYfyhczdBDh0ACDkp0/edit#gid=1203119987"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "ID": "={{ $json.ID }}",
+            "Monday": "={{ $json.Monday }}",
+            "Tuesday": "={{ $json.Tuesday }}",
+            "Wednesday": "={{ $json.Wednesday }}",
+            "Thursday": "={{ $json.Thursday }}",
+            "Friday": "={{ $json.Friday }}",
+            "Saturday": "={{ $json.Saturday }}"
+          },
+          "matchingColumns": [
+            "ID"
+          ],
+          "schema": [
+            {
+              "id": "ID",
+              "displayName": "ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Department",
+              "displayName": "Department",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Doctor_Name",
+              "displayName": "Doctor_Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Monday",
+              "displayName": "Monday",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Tuesday",
+              "displayName": "Tuesday",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Wednesday",
+              "displayName": "Wednesday",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Thursday",
+              "displayName": "Thursday",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Friday",
+              "displayName": "Friday",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Saturday",
+              "displayName": "Saturday",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Start Time",
+              "displayName": "Start Time",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "End Time",
+              "displayName": "End Time",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Fee",
+              "displayName": "Fee",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -64,
+        -1936
+      ],
+      "id": "ae985441-fc27-4f4f-900b-a4e17d473112",
+      "name": "Update row in sheet2",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "VRRh3M0FvZKBrGW0",
+          "name": "kaminoor84"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1Sjk9V1yNY3YCEpjfMzdWZR9AbOYfyhczdBDh0ACDkp0",
+          "mode": "list",
+          "cachedResultName": "Hospital Management System",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Sjk9V1yNY3YCEpjfMzdWZR9AbOYfyhczdBDh0ACDkp0/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 451170272,
+          "mode": "list",
+          "cachedResultName": "Neurology Department",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Sjk9V1yNY3YCEpjfMzdWZR9AbOYfyhczdBDh0ACDkp0/edit#gid=451170272"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "ID": "={{ $json.ID }}",
+            "Monday": "={{ $json.Monday }}",
+            "Tuesday": "={{ $json.Tuesday }}",
+            "Wednesday": "={{ $json.Wednesday }}",
+            "Thursday": "={{ $json.Thursday }}",
+            "Friday": "={{ $json.Friday }}",
+            "Saturday": "={{ $json.Saturday }}"
+          },
+          "matchingColumns": [
+            "ID"
+          ],
+          "schema": [
+            {
+              "id": "ID",
+              "displayName": "ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Department",
+              "displayName": "Department",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Doctor_Name",
+              "displayName": "Doctor_Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Monday",
+              "displayName": "Monday",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Tuesday",
+              "displayName": "Tuesday",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Wednesday",
+              "displayName": "Wednesday",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Thursday",
+              "displayName": "Thursday",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Friday",
+              "displayName": "Friday",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Saturday",
+              "displayName": "Saturday",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Start Time",
+              "displayName": "Start Time",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "End Time",
+              "displayName": "End Time",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Fee",
+              "displayName": "Fee",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -64,
+        -2128
+      ],
+      "id": "93dc093a-fa77-4be3-88f5-0980212ee05d",
+      "name": "Update row in sheet3",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "VRRh3M0FvZKBrGW0",
+          "name": "kaminoor84"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1Sjk9V1yNY3YCEpjfMzdWZR9AbOYfyhczdBDh0ACDkp0",
+          "mode": "list",
+          "cachedResultName": "Hospital Management System",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Sjk9V1yNY3YCEpjfMzdWZR9AbOYfyhczdBDh0ACDkp0/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1161826852,
+          "mode": "list",
+          "cachedResultName": "Cardiology Department",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Sjk9V1yNY3YCEpjfMzdWZR9AbOYfyhczdBDh0ACDkp0/edit#gid=1161826852"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "ID": "={{ $json.ID }}",
+            "Monday": "={{ $json.Monday }}",
+            "Tuesday": "={{ $json.Tuesday }}",
+            "Wednesday": "={{ $json.Wednesday }}",
+            "Thursday": "={{ $json.Thursday }}",
+            "Friday": "={{ $json.Friday }}",
+            "Saturday": "={{ $json.Saturday }}"
+          },
+          "matchingColumns": [
+            "ID"
+          ],
+          "schema": [
+            {
+              "id": "ID",
+              "displayName": "ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Department",
+              "displayName": "Department",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Doctor_Name",
+              "displayName": "Doctor_Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Monday",
+              "displayName": "Monday",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Tuesday",
+              "displayName": "Tuesday",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Wednesday",
+              "displayName": "Wednesday",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Thursday",
+              "displayName": "Thursday",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Friday",
+              "displayName": "Friday",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Saturday",
+              "displayName": "Saturday",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Start Time",
+              "displayName": "Start Time",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "End Time",
+              "displayName": "End Time",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Fee",
+              "displayName": "Fee",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -80,
+        -2288
+      ],
+      "id": "514279c4-f3ea-4a31-8705-3851176aa62f",
+      "name": "Update row in sheet4",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "VRRh3M0FvZKBrGW0",
+          "name": "kaminoor84"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "a7b28a29-62f5-403d-a758-06f59a34b95e",
+              "name": "Mobile Number",
+              "value": "={{ $json['Mobile Number'] }}",
+              "type": "string"
+            },
+            {
+              "id": "d9e6ec72-d937-4f78-8b5b-4e238e838450",
+              "name": "messages[0].text.body",
+              "value": "={{ $('WhatsApp Trigger1').item.json.messages[0].text.body }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -2960,
+        -864
+      ],
+      "id": "93bedf03-7afa-49ed-969e-4a1f037255e3",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "url": "=https://graph.facebook.com/v21.0/{{ $('WhatsApp Trigger1').item.json.messages[0].audio.id }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBearerAuth",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        -2928,
+        0
+      ],
+      "id": "ae0244ee-ca7b-48f0-9202-f5ac3cbd75aa",
+      "name": "HTTP Request",
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "UvpWGVsnm9UQHe7j",
+          "name": "Bearer Auth account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Append row in sheet": {
+      "main": [
+        [
+          {
+            "node": "Receptionist 123",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet1": {
+      "main": [
+        [
+          {
+            "node": "Receptionist 456",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch3": {
+      "main": [
+        [
+          {
+            "node": "New Appointment",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Rescheduling",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Execute Workflow",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Call 'Lab 456'",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Receptionist123",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Receptionist456",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Code in JavaScript3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request6": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request7",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request7": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If2": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript2": {
+      "main": [
+        [
+          {
+            "node": "Switch3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "WhatsApp Trigger1": {
+      "main": [
+        [
+          {
+            "node": "Session Manager",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "If2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Session Manager": {
+      "main": [
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript3": {
+      "main": [
+        [
+          {
+            "node": "Switch1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch1": {
+      "main": [
+        [
+          {
+            "node": "Send message",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Append row in sheet1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript1": {
+      "main": [
+        [
+          {
+            "node": "Switch4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory1": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent2",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent2",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet5": {
+      "main": [
+        [
+          {
+            "node": "Switch2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Cardiology": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Medical Specialist": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Neurology": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gynecology": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gastroenterology": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch2": {
+      "main": [
+        [
+          {
+            "node": "Cardiology",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Neurology",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Gastroenterology",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Gynecology",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Medical Specialist",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "AI Agent2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent2": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Neurology1": {
+      "main": [
+        [
+          {
+            "node": "Send message1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch4": {
+      "main": [
+        [
+          {
+            "node": "Cardiology2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Neurology1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Gastroenterology1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Gynecology1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Medical Specialist1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Cardiology2": {
+      "main": [
+        [
+          {
+            "node": "Send message1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gastroenterology1": {
+      "main": [
+        [
+          {
+            "node": "Send message1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gynecology1": {
+      "main": [
+        [
+          {
+            "node": "Send message1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Medical Specialist1": {
+      "main": [
+        [
+          {
+            "node": "Send message1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Cardiology1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Neurology2",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Gastroenterology2",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Gynecology2",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Medical Specialist2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Update row in sheet4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Medical Specialist2": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript7",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gynecology2": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gastroenterology2": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Neurology2": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Cardiology1": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript7": {
+      "main": [
+        [
+          {
+            "node": "Update row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript6": {
+      "main": [
+        [
+          {
+            "node": "Update row in sheet1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript5": {
+      "main": [
+        [
+          {
+            "node": "Update row in sheet2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript4": {
+      "main": [
+        [
+          {
+            "node": "Update row in sheet3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet5",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update row in sheet": {
+      "main": [
+        []
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false,
+    "timeSavedMode": "fixed",
+    "timezone": "Asia/Karachi",
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": "3rgBvb9SdYE91zJI"
+  },
+  "versionId": "51e8ba00-9b44-44aa-a77f-3fbc6f66065e",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "920c4e5278a15531d84dbf6f08effc6e93b5e1fe7aa67dfade5d207272cfae92"
+  },
+  "id": "jnStLKln8AUlr1Uw",
+  "tags": []
+}

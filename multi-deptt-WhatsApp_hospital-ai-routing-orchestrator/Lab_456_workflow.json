@@ -1,0 +1,2316 @@
+{
+  "name": "Lab 456",
+  "nodes": [
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "query",
+              "type": "any"
+            },
+            {
+              "name": "Session ID"
+            },
+            {
+              "name": "Phone"
+            },
+            {
+              "name": "Message Type"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -3728,
+        624
+      ],
+      "id": "6bf5f174-067d-4283-ae98-69a41af1f2aa",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        -2864,
+        976
+      ],
+      "id": "0f7f14e1-2d72-4702-8969-43575c5c058c",
+      "name": "Google Gemini Chat Model",
+      "retryOnFail": true,
+      "waitBetweenTries": 3000,
+      "credentials": {
+        "googlePalmApi": {
+          "id": "icETtaRNX99UUPUM",
+          "name": "kaminoor"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.query }}",
+        "options": {
+          "systemMessage": "=Role: Senior AI Hospital Coordinator — Pak Int Hospital Lab Booking\nToday: {{ $now.setZone('Asia/Karachi').format('cccc, yyyy-MM-dd') }}\n**Tomorrow:** {{ $now.setZone('Asia/Karachi').plus({days: 1}).format('yyyy-MM-dd') }}\nDay after tomorrow: {{ $now.setZone('Asia/Karachi').plus({days: 2}).format('yyyy-MM-dd') }}\n\nLanguage Rule\nReply in the patient's last message language (English, Roman Urdu, or Urdu Script). Never mix scripts. For non-appointment queries: \"Please call 0321-1234567 for assistance.\"\n\nStrictly follow to first See the User Prompt and decide Scenario A or Scenario B and Slot checking rules.\n\nScenario A — Full Details Provided\nIf handoff (Users Prompt) contains: Patient Name, Mobile Number, Test Name, Test Charges, remember and use it.\nStep 1: Ask — \"Which date and time would you like for your [Test Name] test?\"\nStep 2: Convert relative dates to YYYY-MM-DD yourself. Never ask for the year.\nStep 3: Call Test Slot Tool with the resolved date.\nStep 4: Analyze response:\n\nSlot Checkig Rules (Strict)\n0 events → Day is fully available\n≥12 events → Day is fully booked. Call tool for next day and suggest alternative.\nExtract all slots from 8AM to 8PM, each slot contains 1 hour booking (e.g 8am to 9am), if user's preffered time is already booked on subjected date, list and display all empty slots showing listed numbers (e.g 1,2.3) and ask user to choose number, in any case display slot list.\nStrictly follow the Lab Timing, no appointment after 8PM\nStep 5: On receiving listed number, reply:\n\n\"To proceed, please provide:\nAge & Gender:\nReferring Doctor:\nIssue / Reason for test:\"\nStep 6: After receiving details, confirm:\n\n\"Patient Name: [Name]\nMobile: [Number]\nTest: [Test]\nCharges: [Charges]\nDate: [Date]\nTime: [Start] to [End]\nCorrect? Shall I confirm?\"\n\nStep 7: On \"Yes\":\nCall Test Slot Tool ONE MORE TIME for same date\nIf slot now taken → reject and suggest alternative\nIf still free → output ONLY this JSON at end of response:\n\nBooking: {\"intent\":\"booking confirmed\",\"patientName\":\"[Name]\",\"mobile\":\"[Number]\",\"testName\":\"[Test]\",\"doctorName\":\"[Doctor]\",\"issue\":\"[Reason]\",\"age\":\"[Age]\",\"gender\":\"[Gender]\",\"startTime\":\"YYYY-MM-DDTHH:mm:ss\",\"endTime\":\"YYYY-MM-DDTHH:mm:ss\",\"Test Charges\":\"[Charges]\",\"calendarId\":\"primary\",\"summary\":\"[Test] - [Name]\",\"description\":\"Patient: [Name]\\nTest: [Test]\\nDoctor: [Doctor]\\nMobile: [Number]\"}\n\n\nScenario B — Partial Details (Name + Number Only)\nIf handoff (Users Prompt) contains only: Patient Name, Mobile Number (Test Name and Test Charges missing) remember patient name and mobile number & use it for booking.\nStep 1: Ask — \"Which test would you like to book?\"\nStep 2: On receiving test name, call Lab Test Tool.\nStep 3: Reply:\n\n\"Test: [Name]\nPrice: [Price] PKR\nPreparation: [Protocol]\nReporting: [Time]\nLab Hours: [Hours]\nBooking: [Link/Method]\nShall I proceed for booking?\"\nStep 4: On \"Yes\", follow Scenario A Steps 1–7.\n\n\n| # | Rule                                                                     \n| 1 | Resolve \"today/tomorrow\" to YYYY-MM-DD before any tool call                              \n| 2 | Check EVERY returned event startTime against user request before confirming availability\n\n| 3 | Re-call `Test Slot Tool` after user says \"Yes\" to confirmation — prevent race conditions\n\n| 4 | Output `Booking: {...}` JSON only after second tool call confirms slot is still free\n\n| 5 | JSON must be final text in response\n\nOn thanks: Reply user with text \"Welcome and thanks for choosing Pak International Hospital\"\n\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        -2704,
+        608
+      ],
+      "id": "84d5465a-c1f0-4b4a-b9ed-a2b4dc2fc491",
+      "name": "Lab Deptt",
+      "retryOnFail": true,
+      "waitBetweenTries": 3000
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "=Use this tool immediately when a patient asks for the price, preparation, or availability of any medical test (e.g., CBC, Endoscopy, Colonoscopy).\n\nInput: The name of the test as a search string.\nReturns: A row of data containing:\n\nTest Name\n\nPrice (PKR)\n\nProtocol / Preparation (Fasting/Diet instructions)\n\nLab Timing (e.g., 8 AM to 8 PM)\n\nReporting Time\n\nAppointment Booking (Status: \"Walk in (anytime)\" or \"Book Appointment Required\")\n\n",
+        "documentId": {
+          "__rl": true,
+          "value": "1qTisX9-HyjoZ2zST2VeCFv4DDx_yXjXw-vS_modVVRI",
+          "mode": "list",
+          "cachedResultName": "n8n Automation Dr Appointment",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1qTisX9-HyjoZ2zST2VeCFv4DDx_yXjXw-vS_modVVRI/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1157867243,
+          "mode": "list",
+          "cachedResultName": "Lab Tests",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1qTisX9-HyjoZ2zST2VeCFv4DDx_yXjXw-vS_modVVRI/edit#gid=1157867243"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        -2368,
+        1008
+      ],
+      "id": "ba842a28-4ca4-4430-8a58-f7500e7879e5",
+      "name": "Lab Tests Tool",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "VRRh3M0FvZKBrGW0",
+          "name": "kaminoor84"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// 1. Get the incoming data from the previous node\n// FIX: Using standard n8n reference syntax for safety\nconst inputItem = $input.first().json;\n\n// 2. Extract the raw output text (contains the \"Booking: {...}\" JSON block)\nconst rawOutput = inputItem.output || \"\";\n\n// 3. Parse the JSON block from the text\nlet data = {};\nlet isBookingFound = false;\n\ntry {\n    // Find the JSON block after \"Booking: \"\n    const jsonMatch = rawOutput.match(/Booking:\\s*(\\{.*\\})/s);\n    if (jsonMatch && jsonMatch[1]) {\n        data = JSON.parse(jsonMatch[1]);\n        isBookingFound = true;\n    } else {\n        // Try parsing the entire output as JSON\n        data = JSON.parse(rawOutput);\n        isBookingFound = true;\n    }\n} catch (e) {\n    // Not a JSON block, treating as plain text conversational reply\n    data = {};\n    isBookingFound = false;\n}\n\n// 4. Extract test name from data\nconst testName = data.testName || \"\";\n\n// 5. Convert 24hr + timezone to 12hr format (e.g., \"14:00:00+05:00\" → \"2 PM\")\nfunction to12Hour(timeStr) {\n    if (!timeStr) return \"\";\n    \n    const match = timeStr.match(/(\\d{2}):(\\d{2})/);\n    if (!match) return \"\";\n    \n    const hours = parseInt(match[1], 10);\n    const minutes = match[2];\n    const ampm = hours >= 12 ? 'PM' : 'AM';\n    const h12 = hours % 12 || 12;\n    \n    if (minutes !== \"00\") {\n        return `${h12}:${minutes} ${ampm}`;\n    }\n    return `${h12} ${ampm}`;\n}\n\n// 6. Clean time values\nconst cleanStart = data.startTime || \"\";\nconst cleanEnd = data.endTime || \"\";\nconst startTime12h = to12Hour(cleanStart);\nconst endTime12h = to12Hour(cleanEnd);\n\n// 7. Extract date from startTime (YYYY-MM-DD)\nconst appointmentDate = cleanStart ? cleanStart.substring(0, 10) : \"\";\n\n// 8. Build description with all fixes\nconst detailedDescription = `Patient: ${data.patientName || \"\"}\nTest: ${testName}\nMobile: ${data.mobile || \"\"}\nAge: ${data.age || \"\"}\nGender: ${data.gender || \"\"}\nIssue: ${data.issue || \"\"}\nReferred By: ${data.doctorName || \"\"}\nFee: ${data.fee || data[\"Test Charges\"] || data.testCharges || \"0\"}`;\n\n// 9. Determine intent and conversational reply routing states\nlet finalIntent = data.intent || \"\";\nlet conversationalReply = \"\";\n\nif (isBookingFound) {\n    // Rule 1: If structured booking data exists, explicitly force intent\n    finalIntent = \"booking confirmed\";\n} else {\n    // Rule 2: If it's normal chat text, pass it inside conversationalReply\n    conversationalReply = rawOutput;\n}\n\n// 10. Return fixed output payload matching exactly what you requested\nreturn {\n    json: {\n        authorized: true,\n        Intent: finalIntent,                         // Forced to \"booking confirmed\" on valid parsing\n        conversationalReply: conversationalReply,    // Holds raw reply if it's a normal chat string\n        patientName: data.patientName || \"\",\n        mobile: data.mobile || \"\",\n        testName: testName,\n        referredBy: data.doctorName || \"\",\n        issue: data.issue || \"\",\n        startTime: startTime12h,\n        endTime: endTime12h,\n        date: appointmentDate,\n        googleStart: data.startTime || \"\",\n        googleEnd: data.endTime || \"\",\n        eventId: data.eventId || \"\",\n        calendarId: data.calendarId || \"primary\",\n        summary: data.summary || `${testName} - ${data.patientName || \"\"}`,\n        description: detailedDescription,\n        age: data.age || \"\",\n        gender: data.gender || \"\",\n        testCharges: data.fee || data[\"Test Charges\"] || data.testCharges || \"0\"\n    }\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -2384,
+        608
+      ],
+      "id": "1cbb9e2c-c333-4073-aab2-c0a114297021",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "calendar": {
+          "__rl": true,
+          "value": "kaminoor84@gmail.com",
+          "mode": "list",
+          "cachedResultName": "kaminoor84@gmail.com"
+        },
+        "start": "={{ $json.googleStart }}",
+        "end": "={{ $json.googleEnd }}",
+        "additionalFields": {
+          "description": "={{ $json.description }}",
+          "summary": "={{ $json.summary }}"
+        }
+      },
+      "type": "n8n-nodes-base.googleCalendar",
+      "typeVersion": 1.3,
+      "position": [
+        -1824,
+        592
+      ],
+      "id": "1067b59b-5e39-4e66-85da-1b14006d2936",
+      "name": "Create an event",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "CuXKbTgFvcMEPT19",
+          "name": "kaminoor84"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1Sjk9V1yNY3YCEpjfMzdWZR9AbOYfyhczdBDh0ACDkp0",
+          "mode": "list",
+          "cachedResultName": "Hospital Management System",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Sjk9V1yNY3YCEpjfMzdWZR9AbOYfyhczdBDh0ACDkp0/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1653489453,
+          "mode": "list",
+          "cachedResultName": "Lab Pateints Data",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Sjk9V1yNY3YCEpjfMzdWZR9AbOYfyhczdBDh0ACDkp0/edit#gid=1653489453"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Date": "={{ $('Code in JavaScript').item.json.date }}",
+            "Patient Name": "={{ $('Code in JavaScript').item.json.patientName }}",
+            "Mobile Number": "={{ $('Code in JavaScript').item.json.mobile }}",
+            "Age": "={{ $('Code in JavaScript').item.json.age }}",
+            "Gender": "={{ $('Code in JavaScript').item.json.gender }}",
+            "Start Time": "={{ $('Code in JavaScript').item.json.startTime }}",
+            "End Time": "={{ $('Code in JavaScript').item.json.endTime }}",
+            "Issue": "={{ $('Code in JavaScript').item.json.issue }}",
+            "Calendar ID": "={{ $('Code in JavaScript').item.json.calendarId }}",
+            "Event ID": "={{ $('Create an event').item.json.id }}",
+            "Test Name": "={{ $('Code in JavaScript').item.json.testName }}",
+            "Referred Doctor": "={{ $('Code in JavaScript').item.json.referredBy }}",
+            "Test Charges": "={{ $('Code in JavaScript').item.json.testCharges }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Date",
+              "displayName": "Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Patient Name",
+              "displayName": "Patient Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Mobile Number",
+              "displayName": "Mobile Number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Age",
+              "displayName": "Age",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Gender",
+              "displayName": "Gender",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Issue",
+              "displayName": "Issue",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Test Name",
+              "displayName": "Test Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Test Charges",
+              "displayName": "Test Charges",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Referred Doctor",
+              "displayName": "Referred Doctor",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Start Time",
+              "displayName": "Start Time",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "End Time",
+              "displayName": "End Time",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Event ID",
+              "displayName": "Event ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Calendar ID",
+              "displayName": "Calendar ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Payment Status",
+              "displayName": "Payment Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Message Status",
+              "displayName": "Message Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Reference_ID",
+              "displayName": "Reference_ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Sample Taken",
+              "displayName": "Sample Taken",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Report Status",
+              "displayName": "Report Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Report Delivery Staus",
+              "displayName": "Report Delivery Staus",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -1648,
+        592
+      ],
+      "id": "f8c5ed1f-ca68-4f58-8ee7-fb2f59f0c1a4",
+      "name": "Append row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "VRRh3M0FvZKBrGW0",
+          "name": "kaminoor84"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "send",
+        "phoneNumberId": "1084926121366953",
+        "recipientPhoneNumber": "={{ $('When Executed by Another Workflow').item.json.Phone }}",
+        "textBody": "=Your appointment for Test Name: \"{{ $json['Test Name'] }}\" has been booked successfully as per given details!\nPatient Name: {{ $json['Patient Name'] }}\nMobile Number: {{ $json['Mobile Number'] }}\nAge: {{ $json.Age }}\nGender: {{ $json.Gender }}\nTest Charges: {{ $json['Test Charges'] }}\nDate: {{ $json.Date }}\nStart Time: {{ $json['Start Time'] }}\nEnd Time: {{ $json['End Time'] }}\n\nPlease arrive 20 minutes before. Thanks for choosing Pak International Hospital.\n",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.whatsApp",
+      "typeVersion": 1.1,
+      "position": [
+        -1488,
+        592
+      ],
+      "id": "6ba1cc2e-f637-4f78-94cc-c8e47c6982c6",
+      "name": "Send message1",
+      "webhookId": "ffb35d6d-f053-4bd9-8249-6ae7b05f3b21",
+      "credentials": {
+        "whatsAppApi": {
+          "id": "GT5wOhx2SBmcTiBR",
+          "name": "60 Days Token"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "=Test Slot Tool\nPurpose: Mandatory. Check Google Calendar before booking.\nInput: {\"date\": \"YYYY-MM-DD\"}\nResponse Handling:\nTable\nEvents\tAction\n0\tAvailable. Proceed.\n≥12\tFull. Call tool for next day.\n<12\tExtract all startTime hours. If user-requested hour matches any → taken. Suggest next free hour 08–20. Else → proceed.\nRules:\nLab hours: 08:00–20:00, 1-hour slots, 12 max/day\nCall twice: on request + after \"Yes\" (prevent race conditions)\nCompare hours in 24hr format only\n",
+        "operation": "getAll",
+        "calendar": {
+          "__rl": true,
+          "value": "kaminoor84@gmail.com",
+          "mode": "list",
+          "cachedResultName": "kaminoor84@gmail.com"
+        },
+        "timeMin": "={{ $fromAI(\"date\") }}T03:00:00Z",
+        "timeMax": "={{ $fromAI(\"date\") }}T15:00:00Z",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.3,
+      "position": [
+        -2576,
+        1008
+      ],
+      "id": "b4bae90a-8f10-4516-9d18-e7aaa1d179b7",
+      "name": "Test Slot Tool",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "CuXKbTgFvcMEPT19",
+          "name": "kaminoor84"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "send",
+        "phoneNumberId": "1084926121366953",
+        "recipientPhoneNumber": "={{ $('When Executed by Another Workflow').item.json.Phone }}",
+        "textBody": "={{ $('Code in JavaScript').item.json.conversationalReply }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.whatsApp",
+      "typeVersion": 1.1,
+      "position": [
+        -1584,
+        880
+      ],
+      "id": "59be475f-78fb-450a-b1a9-a2f712f5df9d",
+      "name": "Send message",
+      "webhookId": "599f7670-2995-4d99-bb8e-6d2e70985fca",
+      "credentials": {
+        "whatsAppApi": {
+          "id": "GT5wOhx2SBmcTiBR",
+          "name": "60 Days Token"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "ffc9ce72-3ee6-43e7-8a1d-64cb6f928cd2",
+              "leftValue": "={{ $json.Intent }}",
+              "rightValue": "booking confirmed",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -2208,
+        608
+      ],
+      "id": "8261905e-1c8b-4225-8351-c62134025584",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "documentId": {
+          "__rl": true,
+          "value": "1Sjk9V1yNY3YCEpjfMzdWZR9AbOYfyhczdBDh0ACDkp0",
+          "mode": "list",
+          "cachedResultName": "Hospital Management System",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Sjk9V1yNY3YCEpjfMzdWZR9AbOYfyhczdBDh0ACDkp0/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1653489453,
+          "mode": "list",
+          "cachedResultName": "Lab Pateints Data",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Sjk9V1yNY3YCEpjfMzdWZR9AbOYfyhczdBDh0ACDkp0/edit#gid=1653489453"
+        },
+        "event": "rowUpdate",
+        "options": {
+          "columnsToWatch": [
+            "Payment Status",
+            "Sample Taken",
+            "Report Status"
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.googleSheetsTrigger",
+      "typeVersion": 1,
+      "position": [
+        -2496,
+        1568
+      ],
+      "id": "ed23be67-97de-4c62-8ac2-8dd8acd64952",
+      "name": "Google Sheets Trigger",
+      "credentials": {
+        "googleSheetsTriggerOAuth2Api": {
+          "id": "1FPTnOQmF4ZWdVxU",
+          "name": "kaminoor84 trigger"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "send",
+        "phoneNumberId": "1084926121366953",
+        "recipientPhoneNumber": "={{ $('Code in JavaScript3').item.json.mobile_number }}",
+        "textBody": "=\"Dear {{ $json['Patient Name'] }} , \n\nyour payment of Rs {{ $json.Fee }} has been received against test {{ $json['Test Name'] }} on \nDate & Time {{ $now.setZone('Asia/Karachi').toFormat('dd-MM-yyyy HH:mm') }}.\nReference ID: {{ $json['reference_id'] }}\n\nThank you for choosing Pak Int Hospital. Your results will be ready shortly.\"\n\n",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.whatsApp",
+      "typeVersion": 1.1,
+      "position": [
+        -1408,
+        1360
+      ],
+      "id": "b3356293-8ad8-464d-82f6-2878419d48d3",
+      "name": "Send message3",
+      "webhookId": "42cb101b-81b6-46a5-8543-6eda29f1ec8f",
+      "credentials": {
+        "whatsAppApi": {
+          "id": "GT5wOhx2SBmcTiBR",
+          "name": "60 Days Token"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1Sjk9V1yNY3YCEpjfMzdWZR9AbOYfyhczdBDh0ACDkp0",
+          "mode": "list",
+          "cachedResultName": "Hospital Management System",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Sjk9V1yNY3YCEpjfMzdWZR9AbOYfyhczdBDh0ACDkp0/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1653489453,
+          "mode": "list",
+          "cachedResultName": "Lab Pateints Data",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Sjk9V1yNY3YCEpjfMzdWZR9AbOYfyhczdBDh0ACDkp0/edit#gid=1653489453"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Message Status": "=Sent",
+            "Patient Name": "={{ $('Code in JavaScript3').item.json.patient_name }}",
+            "Test Name": "={{ $('Code in JavaScript3').item.json.test_name }}",
+            "Mobile Number": "={{ $('Code in JavaScript3').item.json.mobile_number }}",
+            "row_number": "={{ $('Code in JavaScript3').item.json.row_number }}",
+            "Reference_ID": "={{ $('Code in JavaScript3').item.json.reference_id }}"
+          },
+          "matchingColumns": [
+            "row_number"
+          ],
+          "schema": [
+            {
+              "id": "Date",
+              "displayName": "Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Patient Name",
+              "displayName": "Patient Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Mobile Number",
+              "displayName": "Mobile Number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Age",
+              "displayName": "Age",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Gender",
+              "displayName": "Gender",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Issue",
+              "displayName": "Issue",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Test Name",
+              "displayName": "Test Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Test Charges",
+              "displayName": "Test Charges",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Referred Doctor",
+              "displayName": "Referred Doctor",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Start Time",
+              "displayName": "Start Time",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "End Time",
+              "displayName": "End Time",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Event ID",
+              "displayName": "Event ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Calendar ID",
+              "displayName": "Calendar ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Payment Status",
+              "displayName": "Payment Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Message Status",
+              "displayName": "Message Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Reference_ID",
+              "displayName": "Reference_ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Sample Taken",
+              "displayName": "Sample Taken",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Report Status",
+              "displayName": "Report Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Report Delivery Staus",
+              "displayName": "Report Delivery Staus",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -1616,
+        1360
+      ],
+      "id": "7ef999a4-a7e2-490c-b40f-20ddbb328681",
+      "name": "Update row in sheet1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "VRRh3M0FvZKBrGW0",
+          "name": "kaminoor84"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "send",
+        "phoneNumberId": "1084926121366953",
+        "recipientPhoneNumber": "={{ $('Code in JavaScript3').item.json.mobile_number }}",
+        "textBody": "=\"Dear {{ $json['Patient Name'] }}, \n\nyour sample for test {{ $json['Test Name'] }} has been taken against on \nDate & Time {{ $now.setZone('Asia/Karachi').toFormat('dd-MM-yyyy HH:mm') }}. \n\nReference ID: {{ $json['Reference_ID'] }}\n\nThank you for choosing Pak Int Hospital. Your results will be ready shortly.\"\n\n",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.whatsApp",
+      "typeVersion": 1.1,
+      "position": [
+        -1408,
+        1568
+      ],
+      "id": "c8d03075-63c1-4396-8b15-a6466e0c178c",
+      "name": "Send message4",
+      "webhookId": "42cb101b-81b6-46a5-8543-6eda29f1ec8f",
+      "credentials": {
+        "whatsAppApi": {
+          "id": "GT5wOhx2SBmcTiBR",
+          "name": "60 Days Token"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1Sjk9V1yNY3YCEpjfMzdWZR9AbOYfyhczdBDh0ACDkp0",
+          "mode": "list",
+          "cachedResultName": "Hospital Management System",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Sjk9V1yNY3YCEpjfMzdWZR9AbOYfyhczdBDh0ACDkp0/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1653489453,
+          "mode": "list",
+          "cachedResultName": "Lab Pateints Data",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Sjk9V1yNY3YCEpjfMzdWZR9AbOYfyhczdBDh0ACDkp0/edit#gid=1653489453"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Patient Name": "={{ $('Code in JavaScript3').item.json.patient_name }}",
+            "Test Name": "={{ $('Code in JavaScript3').item.json.test_name }}",
+            "Mobile Number": "={{ $('Code in JavaScript3').item.json.mobile_number }}",
+            "Fee": "={{ $('Code in JavaScript3').item.json.fee }}",
+            "row_number": "={{ $('Code in JavaScript3').item.json.row_number }}",
+            "Report Status": "In Process",
+            "Reference_ID": "={{ $('Code in JavaScript3').item.json.reference_id }}"
+          },
+          "matchingColumns": [
+            "row_number"
+          ],
+          "schema": [
+            {
+              "id": "Date",
+              "displayName": "Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Patient Name",
+              "displayName": "Patient Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Mobile Number",
+              "displayName": "Mobile Number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Age",
+              "displayName": "Age",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Gender",
+              "displayName": "Gender",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Issue",
+              "displayName": "Issue",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Test Name",
+              "displayName": "Test Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Fee",
+              "displayName": "Fee",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Preferred Doctor",
+              "displayName": "Preferred Doctor",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Start Time",
+              "displayName": "Start Time",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "End Time",
+              "displayName": "End Time",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Event ID",
+              "displayName": "Event ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Calendar ID",
+              "displayName": "Calendar ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Payment Status",
+              "displayName": "Payment Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Message Status",
+              "displayName": "Message Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Reference_ID",
+              "displayName": "Reference_ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Sample Taken",
+              "displayName": "Sample Taken",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Report Status",
+              "displayName": "Report Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Report Delivery Staus",
+              "displayName": "Report Delivery Staus",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -1600,
+        1568
+      ],
+      "id": "00079428-d969-48fb-b014-8d88ed9ccb13",
+      "name": "Update row in sheet3",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "VRRh3M0FvZKBrGW0",
+          "name": "kaminoor84"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// 1. Extract existing fields\nconst patientName = $json[\"Patient Name\"] || \"N/A\";\nconst rowNum = $json[\"row_number\"] || 0;\nconst fee = $json[\"Fee\"] || \"0\";\nconst testName = $json[\"Test Name\"] || \"Lab Test\";\n\n// --- MOBILE NUMBER CONVERSION LOGIC ---\nlet rawMobile = ($json[\"Mobile Number\"] || \"\").toString().trim();\nlet mobileNumber = rawMobile;\n\nif (rawMobile.startsWith('0')) {\n  mobileNumber = '92' + rawMobile.substring(1);\n} else if (rawMobile.length > 0 && !rawMobile.startsWith('92')) {\n  mobileNumber = '92' + rawMobile;\n}\n// --------------------------------------\n\n// 2. Normalize Statuses\nconst paymentStatus = ($json[\"Payment Status\"] || \"\").toString().trim().toUpperCase();\nconst messageStatus = ($json[\"Message Status\"] || \"\").toString().trim().toUpperCase();\nconst sampleTaken = ($json[\"Sample Taken\"] || \"\").toString().trim().toUpperCase();\nconst reportStatus = ($json[\"Report Status\"] || \"\").toString().trim().toUpperCase();\nconst deliveryStatus = ($json[\"Report Delivery Status\"] || \"\").toString().trim().toUpperCase();\n\n// 3. Handle Reference ID Logic (STRICT)\nlet referenceId = $json[\"Reference_ID\"] || $json[\"Reference ID\"] || \"\";\n\n// Only generate if it's truly empty AND paid\nif (paymentStatus === \"PAID\" && (referenceId === \"\" || referenceId === null)) {\n  const datePart = new Date().toISOString().slice(2, 10).replace(/-/g, ''); \n  const randomPart = Math.random().toString(36).substring(2, 5).toUpperCase();\n  referenceId = `LAB-${datePart}-${randomPart}`;\n}\n\n// 4. Define Routing Logic\nlet routingKey = \"no_action\";\n\n// ROUTE 1: Payment Receipt\nif (paymentStatus === \"PAID\" && messageStatus !== \"SENT\") {\n  routingKey = \"send_receipt\";\n} \n// ROUTE 2: Update to In Process\nelse if (sampleTaken === \"YES\" && reportStatus !== \"READY\" && reportStatus !== \"IN PROCESS\") {\n  routingKey = \"update_in_process\";\n}\n// ROUTE 3: Report Ready (PDF Delivery)\nelse if (reportStatus === \"READY\" && deliveryStatus !== \"DELIVERED\") {\n  routingKey = \"send_report\";\n}\n\n// 5. Return Clean Data\nreturn {\n  patient_name: patientName,\n  mobile_number: mobileNumber, // Now outputs in 923XXXXXXXXX format\n  row_number: rowNum,\n  fee: fee,\n  test_name: testName,\n  reference_id: referenceId, \n  routing_key: routingKey\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -2288,
+        1568
+      ],
+      "id": "0fa4b538-16a3-4b3a-a055-9d2d7744644f",
+      "name": "Code in JavaScript3"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.routing_key }}",
+                    "rightValue": "send_receipt",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "83771faf-2964-4246-a717-b49eb97cfe3c"
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "8eb4557d-b615-4a4e-87a3-42ad045e9aef",
+                    "leftValue": "={{ $json.routing_key }}",
+                    "rightValue": "update_in_process",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "cccd0c45-4ad1-47e1-8aae-fd5c9b11edfb",
+                    "leftValue": "={{ $json.routing_key }}",
+                    "rightValue": "send_report",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        -2096,
+        1552
+      ],
+      "id": "897516fa-2937-4773-a284-7eb871d3fd0b",
+      "name": "Switch1"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1Sjk9V1yNY3YCEpjfMzdWZR9AbOYfyhczdBDh0ACDkp0",
+          "mode": "list",
+          "cachedResultName": "Hospital Management System",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Sjk9V1yNY3YCEpjfMzdWZR9AbOYfyhczdBDh0ACDkp0/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1653489453,
+          "mode": "list",
+          "cachedResultName": "Lab Pateints Data",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Sjk9V1yNY3YCEpjfMzdWZR9AbOYfyhczdBDh0ACDkp0/edit#gid=1653489453"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "row_number": "={{ $('Code in JavaScript3').item.json.row_number }}",
+            "Patient Name": "={{ $('Code in JavaScript3').item.json.patient_name }}",
+            "Mobile Number": "={{ $('Code in JavaScript3').item.json.mobile_number }}",
+            "Test Name": "={{ $('Code in JavaScript3').item.json.test_name }}",
+            "Fee": "={{ $('Code in JavaScript3').item.json.fee }}",
+            "Reference_ID": "={{ $('Code in JavaScript3').item.json.reference_id }}",
+            "Report Delivery Staus": "Delivered"
+          },
+          "matchingColumns": [
+            "row_number"
+          ],
+          "schema": [
+            {
+              "id": "Date",
+              "displayName": "Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Patient Name",
+              "displayName": "Patient Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Mobile Number",
+              "displayName": "Mobile Number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Age",
+              "displayName": "Age",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Gender",
+              "displayName": "Gender",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Issue",
+              "displayName": "Issue",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Test Name",
+              "displayName": "Test Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Fee",
+              "displayName": "Fee",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Preferred Doctor",
+              "displayName": "Preferred Doctor",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Start Time",
+              "displayName": "Start Time",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "End Time",
+              "displayName": "End Time",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Event ID",
+              "displayName": "Event ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Calendar ID",
+              "displayName": "Calendar ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Payment Status",
+              "displayName": "Payment Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Message Status",
+              "displayName": "Message Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Reference_ID",
+              "displayName": "Reference_ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Sample Taken",
+              "displayName": "Sample Taken",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Report Status",
+              "displayName": "Report Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Report Delivery Staus",
+              "displayName": "Report Delivery Staus",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -1392,
+        1760
+      ],
+      "id": "354740a5-6c05-462c-a193-1a8e31733015",
+      "name": "Update row in sheet4",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "VRRh3M0FvZKBrGW0",
+          "name": "kaminoor84"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "send",
+        "phoneNumberId": "1084926121366953",
+        "recipientPhoneNumber": "={{ $('Code in JavaScript3').item.json.mobile_number }}",
+        "messageType": "document",
+        "mediaPath": "useMedian8n",
+        "additionalFields": {
+          "mediaFilename": "={{ $json.originalFilename }}",
+          "mediaCaption": "Your Lab Report is ready."
+        }
+      },
+      "type": "n8n-nodes-base.whatsApp",
+      "typeVersion": 1.1,
+      "position": [
+        -1584,
+        1760
+      ],
+      "id": "fc16b546-2adc-4ea5-8c01-62a6338f48ff",
+      "name": "Send message5",
+      "webhookId": "42cb101b-81b6-46a5-8543-6eda29f1ec8f",
+      "credentials": {
+        "whatsAppApi": {
+          "id": "GT5wOhx2SBmcTiBR",
+          "name": "60 Days Token"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "fileFolder",
+        "searchMethod": "query",
+        "queryString": "=name = '{{ $json.reference_id }}.pdf'",
+        "filter": {},
+        "options": {
+          "fields": [
+            "*"
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -1968,
+        1760
+      ],
+      "id": "ed4317d6-0b95-4f19-a678-8dac925ee64e",
+      "name": "Search files and folders",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "hw0BWtiYVC0Y2v8Q",
+          "name": "kaminoor84"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "e689d853-24d8-49ca-9692-7d04a14c9df3",
+              "leftValue": "={{ $('When Executed by Another Workflow').item.json['Message Type'] }}",
+              "rightValue": "audio",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -2096,
+        1056
+      ],
+      "id": "4cd7e491-d7e1-463d-a050-f8777fa77d4a",
+      "name": "If2"
+    },
+    {
+      "parameters": {
+        "operation": "send",
+        "phoneNumberId": "1084926121366953",
+        "recipientPhoneNumber": "={{ $('When Executed by Another Workflow').item.json.Phone }}",
+        "messageType": "audio",
+        "mediaLink": "={{ $json.secure_url.replace('.wav', '.mp3') }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.whatsApp",
+      "typeVersion": 1.1,
+      "position": [
+        -976,
+        1120
+      ],
+      "id": "cc403863-e239-4d6c-9a6f-b5bf7c740597",
+      "name": "Audio Sender",
+      "webhookId": "01e9f61b-8ca4-47c2-8316-37615623b586",
+      "credentials": {
+        "whatsAppApi": {
+          "id": "GT5wOhx2SBmcTiBR",
+          "name": "60 Days Token"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "uploadFile",
+        "resource_type_file": "video",
+        "additionalFieldsFile": {
+          "public_id": "Voicenote"
+        }
+      },
+      "type": "n8n-nodes-cloudinary.cloudinary",
+      "typeVersion": 1,
+      "position": [
+        -1136,
+        1120
+      ],
+      "id": "3e7805c2-5547-4996-b6ef-0157567e7385",
+      "name": "Upload an asset from file data",
+      "credentials": {
+        "cloudinaryApi": {
+          "id": "RWV1AdCIOU2S218S",
+          "name": "Cloudinary account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-tts:generateContent?key=AQ.Ab8RN6InQvFVJFhEg-ZVtI3EqkQ2Ha8O06CXkEiiz9n3fBJ7wA",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"contents\": [\n    {\n      \"parts\": [\n        {\n          \"text\": {{ JSON.stringify($json.output || $node[\"Clinic Department\"].json[\"output\"]) }}\n        }\n      ]\n    }\n  ],\n  \"generationConfig\": {\n    \"responseModalities\": [\"AUDIO\"],\n    \"speechConfig\": {\n      \"voiceConfig\": {\n        \"prebuiltVoiceConfig\": {\n          \"voiceName\": \"Kore\"\n        }\n      }\n    }\n  }\n}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        -1504,
+        1120
+      ],
+      "id": "29843776-b096-47e2-8431-a185fb0273e1",
+      "name": "HTTP Request8"
+    },
+    {
+      "parameters": {
+        "jsCode": "// 1. Get Base64 from Gemini\nconst base64Data = $json.candidates[0].content.parts[0].inlineData.data;\nconst pcmBuffer = Buffer.from(base64Data, 'base64');\n\n// 2. Create WAV Header (44 bytes) so Cloudinary recognizes it\nconst wavHeader = Buffer.alloc(44);\nwavHeader.write('RIFF', 0);\nwavHeader.writeUInt32LE(36 + pcmBuffer.length, 4);\nwavHeader.write('WAVE', 8);\nwavHeader.write('fmt ', 12);\nwavHeader.writeUInt32LE(16, 16);\nwavHeader.writeUInt16LE(1, 20); // PCM format\nwavHeader.writeUInt16LE(1, 22); // Mono\nwavHeader.writeUInt32LE(24000, 24); // Sample Rate (Gemini is 24kHz)\nwavHeader.writeUInt32LE(24000 * 2, 28); // Byte Rate\nwavHeader.writeUInt16LE(2, 32); // Block Align\nwavHeader.writeUInt16LE(16, 34); // Bits per sample\nwavHeader.write('data', 36);\nwavHeader.writeUInt32LE(pcmBuffer.length, 40);\n\n// 3. Combine Header + Raw Data\nconst finalBuffer = Buffer.concat([wavHeader, pcmBuffer]);\n\n// 4. Register as a file for Cloudinary\nconst binaryData = await this.helpers.prepareBinaryData(\n    finalBuffer, \n    'appointment_voice.mp3', \n    'audio/mpeg'\n);\n\nreturn [\n  {\n    json: { resource_type: \"video\" },\n    binary: { data: binaryData }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1312,
+        1120
+      ],
+      "id": "6de2ff1f-872b-4639-af3f-a66b9a94c4a9",
+      "name": "Code in JavaScript4"
+    },
+    {
+      "parameters": {
+        "jsCode": "// 1. Target the incoming data from the active item loop\nconst items = $json;\n\n// 2. Grab the text output sent from your AI Agent\nconst messageText = items.output || \"\";\n\n// 3. Fallback to your current state tracking routing type\nlet determinedType = items[\"Message Type\"] || \"audio\";\n\n// 4. Convert text to lowercase once for accurate string checking\nconst lowerText = messageText.toLowerCase();\n\n// 5. Check Rule A: Explicit Lab Action JSON Intents\nconst hasJsonIntent = lowerText.includes(\"booking confirmed\") || \n                      lowerText.includes(\"booking rescheduled\") || \n                      lowerText.includes(\"booking cancelled\");\n\n// 6. Check Rule B: Core Patient & Lab Test Confirmation Summaries\nconst hasSummaryLayout = lowerText.includes(\"patient name:\") || \n                         lowerText.includes(\"test:\") || \n                         lowerText.includes(\"charges:\") ||\n                         lowerText.includes(\"shall i confirm?\");\n\n// 7. Check Rule C: Lab Test Information & Slot Selection Announcements\nconst hasLabInfoList = lowerText.includes(\"preparation:\") || \n                       lowerText.includes(\"reporting:\") || \n                       lowerText.includes(\"available slots are:\") ||\n                       lowerText.includes(\"choose a slot by its number\");\n\n// 8. If any structured lab summary, slot checklist, or test details match, force Text route\nif (hasJsonIntent || hasSummaryLayout || hasLabInfoList) {\n    determinedType = \"text\";\n}\n\n// 9. Output the clean object back to your downstream workflow nodes\nreturn {\n    \"output\": messageText,\n    \"Message Type\": determinedType,\n    \"Customer Number\": items[\"Customer Number\"] || \"\",\n    \"Session ID\": items[\"Session ID\"] || \"\",\n    \"Current_Department\": items[\"Current_Department\"] || \"Lab Deptt\"\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1904,
+        1104
+      ],
+      "id": "315df6e8-703a-4f28-aa09-b322afbf5c52",
+      "name": "Code in JavaScript5"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "ce112504-2fd9-4770-baf3-265ea085c794",
+              "leftValue": "={{ $json['Message Type'] }}",
+              "rightValue": "audio",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -1712,
+        1104
+      ],
+      "id": "3dc1ce73-062c-4414-85ec-b5cf8de74f58",
+      "name": "If5"
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $('When Executed by Another Workflow').item.json['Session ID'] }}",
+        "contextWindowLength": 10
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        -2720,
+        992
+      ],
+      "id": "5c14c37a-1eea-4bff-a264-a4fd670de920",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1Sjk9V1yNY3YCEpjfMzdWZR9AbOYfyhczdBDh0ACDkp0",
+          "mode": "list",
+          "cachedResultName": "Hospital Management System",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Sjk9V1yNY3YCEpjfMzdWZR9AbOYfyhczdBDh0ACDkp0/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 306517679,
+          "mode": "list",
+          "cachedResultName": "Session Manager",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Sjk9V1yNY3YCEpjfMzdWZR9AbOYfyhczdBDh0ACDkp0/edit#gid=306517679"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Session ID",
+              "lookupValue": "={{ $('When Executed by Another Workflow').item.json['Session ID'] }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -1280,
+        592
+      ],
+      "id": "61b71057-8f3d-43ca-b8d4-5437ee3f14ec",
+      "name": "Get row(s) in sheet",
+      "retryOnFail": true,
+      "waitBetweenTries": 3000,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "VRRh3M0FvZKBrGW0",
+          "name": "kaminoor84"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "delete",
+        "documentId": {
+          "__rl": true,
+          "value": "1Sjk9V1yNY3YCEpjfMzdWZR9AbOYfyhczdBDh0ACDkp0",
+          "mode": "list",
+          "cachedResultName": "Hospital Management System",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Sjk9V1yNY3YCEpjfMzdWZR9AbOYfyhczdBDh0ACDkp0/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 306517679,
+          "mode": "list",
+          "cachedResultName": "Session Manager",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Sjk9V1yNY3YCEpjfMzdWZR9AbOYfyhczdBDh0ACDkp0/edit#gid=306517679"
+        },
+        "startIndex": "={{ $json.row_number }}",
+        "numberToDelete": "={{ 1 }}"
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -1056,
+        592
+      ],
+      "id": "1b465057-0e70-454b-a21c-62c77f1243d2",
+      "name": "Delete rows or columns from sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "VRRh3M0FvZKBrGW0",
+          "name": "kaminoor84"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "=https://graph.facebook.com/v21.0/{{ $('WhatsApp Trigger1').item.json.messages[0].audio.id }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBearerAuth",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        -3392,
+        960
+      ],
+      "id": "68b6f6f3-c859-44c3-b333-de6d33a764d6",
+      "name": "HTTP Request",
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "UvpWGVsnm9UQHe7j",
+          "name": "Bearer Auth account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.url }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBearerAuth",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        -3248,
+        960
+      ],
+      "id": "442981b7-e6dd-4dc8-95a1-f68adca18409",
+      "name": "HTTP Request11",
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "UvpWGVsnm9UQHe7j",
+          "name": "Bearer Auth account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.groq.com/openai/v1/audio/transcriptions",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBearerAuth",
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "parameterType": "formBinaryData",
+              "name": "file",
+              "inputDataFieldName": "data"
+            },
+            {
+              "name": "model",
+              "value": "whisper-large-v3"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        -3088,
+        960
+      ],
+      "id": "c3bbe358-42c3-4905-afcc-aa623e7094cf",
+      "name": "HTTP Request12",
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "kePPL0JgLNNHCJiB",
+          "name": "Whisper groq API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// 1. Get the incoming data item\nconst incomingItems = $input.all();\nlet basePayload = {};\n\nif (incomingItems && incomingItems.length > 0) {\n  basePayload = incomingItems[0].json;\n}\n\n// 2. Extract the query string accurately from any incoming path variation\n// This checks 'query', 'User Message', or 'text' based on your workflow paths\nlet finalQuery = basePayload[\"query\"] || basePayload[\"User Message\"] || basePayload[\"text\"] || \"\";\n\n// 3. Determine the Message Type dynamically\nlet messageType = basePayload[\"Message Type\"] || (basePayload[\"text\"] ? \"audio\" : \"text\");\n\n// 4. Return ONLY the two requested keys in the output payload\nreturn [{\n  json: {\n    \"query\": finalQuery,\n    \"Message Type\": messageType\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -2976,
+        608
+      ],
+      "id": "a9c20ef7-3d9a-4636-8aca-8fc5c9b46d3d",
+      "name": "Code in JavaScript6"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "757ab8aa-9c65-45c9-a49e-b75bb7b1a207",
+              "leftValue": "={{ $json['Message Type'] }}",
+              "rightValue": "audio",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -3504,
+        624
+      ],
+      "id": "6a5a8378-6c5b-4159-9600-4cb1218aa327",
+      "name": "If1"
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $json.id }}",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -1760,
+        1760
+      ],
+      "id": "e39f0094-8e97-4530-bfd4-c034127f6a95",
+      "name": "Download file",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "hw0BWtiYVC0Y2v8Q",
+          "name": "kaminoor84"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Lab Deptt",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lab Deptt": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lab Tests Tool": {
+      "ai_tool": [
+        [
+          {
+            "node": "Lab Deptt",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create an event": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet": {
+      "main": [
+        [
+          {
+            "node": "Send message1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Test Slot Tool": {
+      "ai_tool": [
+        [
+          {
+            "node": "Lab Deptt",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Create an event",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "If2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets Trigger": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update row in sheet1": {
+      "main": [
+        [
+          {
+            "node": "Send message3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update row in sheet3": {
+      "main": [
+        [
+          {
+            "node": "Send message4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript3": {
+      "main": [
+        [
+          {
+            "node": "Switch1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch1": {
+      "main": [
+        [
+          {
+            "node": "Update row in sheet1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Update row in sheet3",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Search files and folders",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send message5": {
+      "main": [
+        [
+          {
+            "node": "Update row in sheet4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search files and folders": {
+      "main": [
+        [
+          {
+            "node": "Download file",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If2": {
+      "main": [
+        [
+          {
+            "node": "Send message",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Code in JavaScript5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload an asset from file data": {
+      "main": [
+        [
+          {
+            "node": "Audio Sender",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request8": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript4": {
+      "main": [
+        [
+          {
+            "node": "Upload an asset from file data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript5": {
+      "main": [
+        [
+          {
+            "node": "If5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If5": {
+      "main": [
+        [
+          {
+            "node": "Send message",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "HTTP Request8",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "Lab Deptt",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send message1": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "Delete rows or columns from sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request11",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request11": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request12",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request12": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript6",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript6": {
+      "main": [
+        [
+          {
+            "node": "Lab Deptt",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download file": {
+      "main": [
+        [
+          {
+            "node": "Send message5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false,
+    "timeSavedMode": "fixed",
+    "timezone": "Asia/Karachi",
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": "3rgBvb9SdYE91zJI"
+  },
+  "versionId": "69010cc0-d51d-49cd-a4b5-70d74af0ae91",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "920c4e5278a15531d84dbf6f08effc6e93b5e1fe7aa67dfade5d207272cfae92"
+  },
+  "id": "ujFmFq3p7t3Mc8JJ",
+  "tags": []
+}

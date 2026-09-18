@@ -1,0 +1,1307 @@
+{
+  "name": "New Appointment 123",
+  "nodes": [
+    {
+      "parameters": {
+        "calendar": {
+          "__rl": true,
+          "value": "={{ $json.calendarId }}",
+          "mode": "id"
+        },
+        "start": "={{ $('Code in JavaScript1').item.json.startISO }}",
+        "end": "={{ $('Code in JavaScript1').item.json.endISO }}",
+        "useDefaultReminders": false,
+        "additionalFields": {
+          "attendees": [],
+          "description": "=Mobile Number: {{ $json.mobile }}\nAge & Gender: {{ $json.age }}, {{ $json.gender }}\nDepartment: {{ $json.department }}\nFee: {{ $json.fee }}\nIssue: {{ $json.issue }}",
+          "summary": "={{ $json.patientName }} - {{ $json.issue }}"
+        }
+      },
+      "type": "n8n-nodes-base.googleCalendar",
+      "typeVersion": 1.3,
+      "position": [
+        1904,
+        -800
+      ],
+      "id": "9f67d3e6-2f8d-4079-a7d6-99f834007f99",
+      "name": "Create an event",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "CuXKbTgFvcMEPT19",
+          "name": "kaminoor84"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1Sjk9V1yNY3YCEpjfMzdWZR9AbOYfyhczdBDh0ACDkp0",
+          "mode": "list",
+          "cachedResultName": "Hospital Management System",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Sjk9V1yNY3YCEpjfMzdWZR9AbOYfyhczdBDh0ACDkp0/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Patient Data",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Sjk9V1yNY3YCEpjfMzdWZR9AbOYfyhczdBDh0ACDkp0/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Issue": "={{ $('Code in JavaScript1').item.json.issue }}",
+            "Date": "={{ $('Code in JavaScript1').item.json.appointmentDate }}",
+            "Department": "={{ $('Code in JavaScript1').item.json.department }}",
+            "Event_ID": "={{ $('Create an event').item.json.id }}",
+            "Fee": "={{ $('Code in JavaScript1').item.json.fee }}",
+            "Calendar_ID": "={{ $('Code in JavaScript1').item.json.calendarId }}",
+            "Gender": "={{ $('Code in JavaScript1').item.json.gender }}",
+            "Age": "={{ $('Code in JavaScript1').item.json.age }}",
+            "Start Time": "={{ $('Code in JavaScript1').item.json.startTimeFormatted }}",
+            "End Time": "={{ $('Code in JavaScript1').item.json.endTimeFormatted }}",
+            "Booking Status": "={{ $('Code in JavaScript1').item.json.intent }}",
+            "Doctor Name": "={{ $('Code in JavaScript1').item.json.doctorName }}",
+            "Patient Name": "={{ $('Code in JavaScript1').item.json.patientName }}",
+            "Mobile Number": "={{ $('Code in JavaScript1').item.json.mobile }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Calendar_ID",
+              "displayName": "Calendar_ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Event_ID",
+              "displayName": "Event_ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Date",
+              "displayName": "Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Department",
+              "displayName": "Department",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Doctor Name",
+              "displayName": "Doctor Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Patient Name",
+              "displayName": "Patient Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Mobile Number",
+              "displayName": "Mobile Number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Issue",
+              "displayName": "Issue",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Age",
+              "displayName": "Age",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Gender",
+              "displayName": "Gender",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Start Time",
+              "displayName": "Start Time",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "End Time",
+              "displayName": "End Time",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Booking Status",
+              "displayName": "Booking Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Fee",
+              "displayName": "Fee",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Reminder",
+              "displayName": "Reminder",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        2096,
+        -800
+      ],
+      "id": "f4348983-507f-4db1-93a0-aedbe6b16d6c",
+      "name": "Append row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "VRRh3M0FvZKBrGW0",
+          "name": "kaminoor84"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $json['Session ID'] }}",
+        "contextWindowLength": 10
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        1168,
+        -400
+      ],
+      "id": "b46a1293-d4c5-4ddf-8774-d1b2e3eb8078",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "operation": "send",
+        "phoneNumberId": "1084926121366953",
+        "recipientPhoneNumber": "={{ $('When Executed by Another Workflow').item.json.Phone }}",
+        "textBody": "=Your appointment has been confirmed! ✅\nPatient Name: {{ $json['Patient Name'] }}\nMobile: {{ $json['Mobile Number'] }}\nIssue: {{ $json.Issue }}\nDoctor Name: {{ $json['Doctor Name'] }}\nDepartment: {{ $json.Department }}\nDate: {{ $json.Date }}\nAppointment Time: {{ $json['Start Time'] }} to {{ $json['End Time'] }}\nFee: {{ $json.Fee }}\nStatus: {{ $json['Booking Status'] }}\n\nPlease arrive 20 minutes before the appointment time. Thanks for choosing Pak International Hospital\n\n\n",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.whatsApp",
+      "typeVersion": 1.1,
+      "position": [
+        2256,
+        -800
+      ],
+      "id": "f0707bc5-c957-4183-861f-84ee799bda7a",
+      "name": "Text Sender1",
+      "webhookId": "5963a46f-7b98-486a-b1e1-870d5b71153e",
+      "credentials": {
+        "whatsAppApi": {
+          "id": "GT5wOhx2SBmcTiBR",
+          "name": "60 Days Token"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "query",
+              "type": "any"
+            },
+            {
+              "name": "Session ID"
+            },
+            {
+              "name": "Phone"
+            },
+            {
+              "name": "Message Type"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        896,
+        -784
+      ],
+      "id": "d1d89847-1d32-4f9f-a37b-d846e911ace7",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1Sjk9V1yNY3YCEpjfMzdWZR9AbOYfyhczdBDh0ACDkp0",
+          "mode": "list",
+          "cachedResultName": "Hospital Management System",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Sjk9V1yNY3YCEpjfMzdWZR9AbOYfyhczdBDh0ACDkp0/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Patient Data",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Sjk9V1yNY3YCEpjfMzdWZR9AbOYfyhczdBDh0ACDkp0/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Reminder": "=Sent",
+            "Mobile Number": "={{ $json['Mobile Number'] }}"
+          },
+          "matchingColumns": [
+            "Mobile Number"
+          ],
+          "schema": [
+            {
+              "id": "Calendar_ID",
+              "displayName": "Calendar_ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Event_ID",
+              "displayName": "Event_ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Date",
+              "displayName": "Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Department",
+              "displayName": "Department",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Doctor Name",
+              "displayName": "Doctor Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Patient Name",
+              "displayName": "Patient Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Mobile Number",
+              "displayName": "Mobile Number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Issue",
+              "displayName": "Issue",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Age",
+              "displayName": "Age",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Gender",
+              "displayName": "Gender",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Start Time",
+              "displayName": "Start Time",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "End Time",
+              "displayName": "End Time",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Booking Status",
+              "displayName": "Booking Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Fee",
+              "displayName": "Fee",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Reminder",
+              "displayName": "Reminder",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        2192,
+        -1184
+      ],
+      "id": "4a57025b-578f-4b79-bae3-ab3f6e12b697",
+      "name": "Update row in sheet1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "VRRh3M0FvZKBrGW0",
+          "name": "kaminoor84"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 8,
+              "triggerAtMinute": 1
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        1824,
+        -1184
+      ],
+      "id": "bcd6c97b-3e65-4147-a614-dbc3405543b2",
+      "name": "Schedule Trigger1"
+    },
+    {
+      "parameters": {
+        "operation": "send",
+        "phoneNumberId": "1084926121366953",
+        "recipientPhoneNumber": "={{ $json['Mobile Number'] }}",
+        "textBody": "=Appointment Reminder!\n\nDear {{ $('Get row(s) in sheet1').item.json['Patient Name'] }} \n\nThis is a reminder that your appointment is booked with {{ $('Get row(s) in sheet1').item.json['Doctor Name'] }} today at {{ $('Get row(s) in sheet1').item.json['Start Time'] }} to {{ $('Get row(s) in sheet1').item.json['End Time'] }}. \n\nYou are requested to arrive 20 minutes early.\n\nThank you!",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.whatsApp",
+      "typeVersion": 1.1,
+      "position": [
+        2400,
+        -1184
+      ],
+      "id": "83a44bb9-45fc-45f6-a288-4426205ffc50",
+      "name": "Send message5",
+      "webhookId": "fca9581a-3603-4029-9595-dc0f7290eafd",
+      "credentials": {
+        "whatsAppApi": {
+          "id": "GT5wOhx2SBmcTiBR",
+          "name": "60 Days Token"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1Sjk9V1yNY3YCEpjfMzdWZR9AbOYfyhczdBDh0ACDkp0",
+          "mode": "list",
+          "cachedResultName": "Hospital Management System",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Sjk9V1yNY3YCEpjfMzdWZR9AbOYfyhczdBDh0ACDkp0/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Patient Data",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Sjk9V1yNY3YCEpjfMzdWZR9AbOYfyhczdBDh0ACDkp0/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Date",
+              "lookupValue": "={{ $now.toFormat('yyyy-MM-dd') }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        2016,
+        -1184
+      ],
+      "id": "f0006247-b5c7-41bf-8df7-da1b57000f3f",
+      "name": "Get row(s) in sheet1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "VRRh3M0FvZKBrGW0",
+          "name": "kaminoor84"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "APPOINTMENT REMINDER",
+        "height": 336,
+        "width": 928
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1744,
+        -1312
+      ],
+      "id": "2b2c73ee-1c1f-412e-9221-9cf539635dd4",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "e689d853-24d8-49ca-9692-7d04a14c9df3",
+              "leftValue": "={{ $('When Executed by Another Workflow').item.json['Message Type'] }}",
+              "rightValue": "audio",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        1792,
+        -304
+      ],
+      "id": "d73dfc2e-119a-4d82-8073-9456059a5181",
+      "name": "If2"
+    },
+    {
+      "parameters": {
+        "jsCode": "// 1. Target the incoming data from the active item loop\nconst items = $json;\n\n// 2. Fix: Grab text from conversationalReply first, then fallback to output\nconst messageText = items.conversationalReply || items.output || \"\";\n\n// 3. Fallback to your current state tracking routing type\nlet determinedType = items[\"Message Type\"] || \"audio\";\n\n// 4. Convert text to lowercase once for accurate string checking\nconst lowerText = messageText.toLowerCase();\n\n// 5. Check Rule A: Explicit Clinic Action JSON Intents\nconst hasJsonIntent = lowerText.includes(\"booking confirmed\") || \n                      lowerText.includes(\"booking rescheduled\") || \n                      lowerText.includes(\"booking cancelled\");\n\n// 6. Check Rule B: Core Patient & Clinic Confirmation Headers\nconst hasSummaryLayout = lowerText.includes(\"patient name:\") || \n                         lowerText.includes(\"mobile number:\") || \n                         lowerText.includes(\"confirmation summary:\") ||\n                         lowerText.includes(\"shall i book?\") ||\n                         lowerText.includes(\"reply yes to proceed\");\n\n// 7. Check Rule C: Slot Availability Announcements (Updated with your live text)\nconst hasSlotList = lowerText.includes(\"available slots\") || \n                    lowerText.includes(\"slot on\") || \n                    lowerText.includes(\"is unavailable\") ||\n                    lowerText.includes(\"select the number corresponding\");\n\n// 8. If any structured confirmation layout or slot list matches, force Text route\nif (hasJsonIntent || hasSummaryLayout || hasSlotList) {\n    determinedType = \"text\";\n}\n\n// 9. Output the clean object back, passing conversationalReply forward safely\nreturn {\n    \"conversationalReply\": items.conversationalReply || \"\",\n    \"output\": messageText,\n    \"Message Type\": determinedType,\n    \"Customer Number\": items[\"Customer Number\"] || \"\",\n    \"Session ID\": items[\"Session ID\"] || \"\",\n    \"Current_Department\": items[\"Current_Department\"] || \"Clinic Deptt\"\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2000,
+        -288
+      ],
+      "id": "cc4c2ba4-5e89-4edf-a3f1-2dd1310b7782",
+      "name": "Code in JavaScript5"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "ce112504-2fd9-4770-baf3-265ea085c794",
+              "leftValue": "={{ $json['Message Type'] }}",
+              "rightValue": "audio",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        2176,
+        -288
+      ],
+      "id": "de7889bb-ff6a-4f81-b0ee-b556bd1b25c1",
+      "name": "If5"
+    },
+    {
+      "parameters": {
+        "operation": "send",
+        "phoneNumberId": "1084926121366953",
+        "recipientPhoneNumber": "={{ $('When Executed by Another Workflow').item.json.Phone }}",
+        "textBody": "={{ $('Code in JavaScript1').item.json.conversationalReply }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.whatsApp",
+      "typeVersion": 1.1,
+      "position": [
+        2288,
+        -528
+      ],
+      "id": "47d48f47-e2eb-485b-9409-e6371f1ea83f",
+      "name": "Send message3",
+      "webhookId": "599f7670-2995-4d99-bb8e-6d2e70985fca",
+      "credentials": {
+        "whatsAppApi": {
+          "id": "GT5wOhx2SBmcTiBR",
+          "name": "60 Days Token"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "send",
+        "phoneNumberId": "1084926121366953",
+        "recipientPhoneNumber": "={{ $('When Executed by Another Workflow').item.json.Phone }}",
+        "messageType": "audio",
+        "mediaLink": "={{ $json.secure_url.replace('.wav', '.mp3') }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.whatsApp",
+      "typeVersion": 1.1,
+      "position": [
+        2944,
+        -272
+      ],
+      "id": "d3584e36-a0b1-4549-a3df-0ff5de7be548",
+      "name": "Audio Sender",
+      "webhookId": "01e9f61b-8ca4-47c2-8316-37615623b586",
+      "credentials": {
+        "whatsAppApi": {
+          "id": "GT5wOhx2SBmcTiBR",
+          "name": "60 Days Token"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "uploadFile",
+        "resource_type_file": "video",
+        "additionalFieldsFile": {
+          "public_id": "Voicenote"
+        }
+      },
+      "type": "n8n-nodes-cloudinary.cloudinary",
+      "typeVersion": 1,
+      "position": [
+        2784,
+        -272
+      ],
+      "id": "883a3a12-5e65-4903-a05c-479190e3f32c",
+      "name": "Upload an asset from file data",
+      "credentials": {
+        "cloudinaryApi": {
+          "id": "RWV1AdCIOU2S218S",
+          "name": "Cloudinary account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-tts:generateContent?key=AQ.Ab8RN6InQvFVJFhEg-ZVtI3EqkQ2Ha8O06CXkEiiz9n3fBJ7wA",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"contents\": [\n    {\n      \"parts\": [\n        {\n          \"text\": {{ JSON.stringify($json.chatResponse || $json.output || $('Code in JavaScript1').first().json.conversationalReply || \"\") }}\n        }\n      ]\n    }\n  ],\n  \"generationConfig\": {\n    \"responseModalities\": [\n      \"AUDIO\"\n    ],\n    \"speechConfig\": {\n      \"voiceConfig\": {\n        \"prebuiltVoiceConfig\": {\n          \"voiceName\": \"Kore\"\n        }\n      }\n    }\n  }\n}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        2416,
+        -272
+      ],
+      "id": "6c669a3e-6fe8-4d4c-9a9a-f20e0987e621",
+      "name": "HTTP Request8",
+      "retryOnFail": true,
+      "maxTries": 5,
+      "waitBetweenTries": 5000
+    },
+    {
+      "parameters": {
+        "jsCode": "// 1. Get Base64 from Gemini\nconst base64Data = $json.candidates[0].content.parts[0].inlineData.data;\nconst pcmBuffer = Buffer.from(base64Data, 'base64');\n\n// 2. Create WAV Header (44 bytes) so Cloudinary recognizes it\nconst wavHeader = Buffer.alloc(44);\nwavHeader.write('RIFF', 0);\nwavHeader.writeUInt32LE(36 + pcmBuffer.length, 4);\nwavHeader.write('WAVE', 8);\nwavHeader.write('fmt ', 12);\nwavHeader.writeUInt32LE(16, 16);\nwavHeader.writeUInt16LE(1, 20); // PCM format\nwavHeader.writeUInt16LE(1, 22); // Mono\nwavHeader.writeUInt32LE(24000, 24); // Sample Rate (Gemini is 24kHz)\nwavHeader.writeUInt32LE(24000 * 2, 28); // Byte Rate\nwavHeader.writeUInt16LE(2, 32); // Block Align\nwavHeader.writeUInt16LE(16, 34); // Bits per sample\nwavHeader.write('data', 36);\nwavHeader.writeUInt32LE(pcmBuffer.length, 40);\n\n// 3. Combine Header + Raw Data\nconst finalBuffer = Buffer.concat([wavHeader, pcmBuffer]);\n\n// 4. Register as a file for Cloudinary\nconst binaryData = await this.helpers.prepareBinaryData(\n    finalBuffer, \n    'appointment_voice.mp3', \n    'audio/mpeg'\n);\n\nreturn [\n  {\n    json: { resource_type: \"video\" },\n    binary: { data: binaryData }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2608,
+        -272
+      ],
+      "id": "17db564c-aa70-4714-b0fe-025cc0ed4559",
+      "name": "Code in JavaScript4"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1Sjk9V1yNY3YCEpjfMzdWZR9AbOYfyhczdBDh0ACDkp0",
+          "mode": "list",
+          "cachedResultName": "Hospital Management System",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Sjk9V1yNY3YCEpjfMzdWZR9AbOYfyhczdBDh0ACDkp0/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 306517679,
+          "mode": "list",
+          "cachedResultName": "Session Manager",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Sjk9V1yNY3YCEpjfMzdWZR9AbOYfyhczdBDh0ACDkp0/edit#gid=306517679"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Session ID",
+              "lookupValue": "={{ $('When Executed by Another Workflow').item.json['Session ID'] }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        2464,
+        -800
+      ],
+      "id": "cc7aac83-6097-43d1-b8c9-deb135a75137",
+      "name": "Get row(s) in sheet2",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "VRRh3M0FvZKBrGW0",
+          "name": "kaminoor84"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "delete",
+        "documentId": {
+          "__rl": true,
+          "value": "1Sjk9V1yNY3YCEpjfMzdWZR9AbOYfyhczdBDh0ACDkp0",
+          "mode": "list",
+          "cachedResultName": "Hospital Management System",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Sjk9V1yNY3YCEpjfMzdWZR9AbOYfyhczdBDh0ACDkp0/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 306517679,
+          "mode": "list",
+          "cachedResultName": "Session Manager",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Sjk9V1yNY3YCEpjfMzdWZR9AbOYfyhczdBDh0ACDkp0/edit#gid=306517679"
+        },
+        "startIndex": "={{ $json.row_number }}"
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        2672,
+        -800
+      ],
+      "id": "becf329f-31c2-42f1-8111-daaeedb9e2a7",
+      "name": "Delete rows or columns from sheet1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "VRRh3M0FvZKBrGW0",
+          "name": "kaminoor84"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.query }}",
+        "options": {
+          "systemMessage": "=ROLE & INTRO\nRole & Context: You are the Senior Appointment Specialist at Pak International Hospital.\n\nLanguage Rule (Strict): Use the entire sentence of the user's last message to detect the language (either Roman Urdu or English) and reply in the exact same language. (No Hindi script or Hindi-specific vocabulary is allowed).\nCONTEXT\nToday: {{ $now.setZone('Asia/Karachi').format('cccc, d MMMM yyyy, HH:mm') }}\n\nDATE RULE: Bookings are allowed only for the next 7 days from Today ({{ $now.toFormat('yyyy-MM-dd') }}). Reject dates beyond this range.\n\nClinic Timing: 10:00-18:00 | Lunch Break: 13:00-14:00 (No Slots Allowed)\nUsers Prompt:\n\n[Strict: This contains pre-verified data passed from the parent workflow. Do not ask for any information already provided here.]\nBOOKING FLOW\nStep 1. Identify the patient's target booking day from the Users Prompt. Ask the patient: \"What is your preferred time for booking an appointment on [Day Name]?\"\nDAY RESOLUTION RULE (CRITICAL — Apply Before Everything Else):\n\nWhen resolving a day name (e.g., \"Saturday\", \"Monday\") to an actual calendar date, always follow this strict logic:\n\nCalculate the date of the mentioned day within the current ongoing week first (Monday to Sunday of the current week).\nIf that day has already passed (i.e., its date is before or equal to today), then move to the next occurrence of that day in the following week.\nIf that day is today or still upcoming within the current week, use that date directly.\nNever skip to the following week if the day is still upcoming in the current week.\n\nExample (Today = Friday, 19 June 2026):\n\nPatient says \"Saturday\" → Saturday of this week = 20 June 2026 (tomorrow, not yet passed) → ✅ Book on 20 June 2026\nPatient says \"Friday\" → Friday of this week = 19 June 2026 (today) → ✅ Book on 19 June 2026\nPatient says \"Thursday\" → Thursday of this week = 18 June 2026 (already passed) → ✅ Book on 25 June 2026 (next Thursday)\nPatient says \"Monday\" → Monday of this week = 15 June 2026 (already passed) → ✅ Book on 22 June 2026 (next Monday)\n\nStep 2. Take the Calendar ID from the Users Prompt and call the \"Time Slot Tool\".\n\nTOOL CRITICAL RULE: If the tool returns an empty response ([]), it means there are ZERO conflicting bookings. The entire day is 100% AVAILABLE, and the patient's preferred time is completely free.\n\nStep 3. Generate and display exactly 4 consecutive available slots starting directly from the patient's preferred time.\nSTEP 1: DETERMINING THE STARTING TIME\n\nCASE A (Patient Specifies Time): Set the starting point exactly at the hour and minute requested by the patient (e.g., if they request 3:00 PM, the first slot must start precisely at 03:00 PM).\nCASE B (Patient Does Not Specify Time): Default to the morning fallback starting point, which is exactly 10:00 AM.\n\nSTEP 2: CALCULATING THE 4 SLOTS\n\nCreate exactly 4 sequential slots using a strict 15-minute interval per slot (:00, :15, :30, :45).\nCurrent Year Constraint: Always use the current year (2026) for scheduling.\nBreak Time Exclusion: Automatically skip, omit, and leap over any slots that fall between 13:00 and 14:00 (1:00 PM to 2:00 PM). Do not display lunch hour slots under any circumstances.\nIf an exact slot time is explicitly written as an active booking in the tool's response data, skip that specific slot and calculate the next available one until you have a total of 4 clean options.\n\nSTEP 3: OUTPUT FORMATTING\n\nCRITICAL FIRST OPTION RULE: If the patient asks for a specific time (like 3:00 PM) and that slot is NOT explicitly listed as busy in the tool data (or if the tool returned []), you MUST display their requested time as \"1) Option 1\". Do not say it is unavailable.\nOnly inform the patient that their preferred time is unavailable if you see a conflicting event for that exact time explicitly listed in the tool data.\nAlways display the 4 available slots strictly formatted as a clean, numbered list from 1 to 4, and ask the patient to select a number:\n\n[Start Time 1] to [End Time 1]\n[Start Time 2] to [End Time 2]\n[Start Time 3] to [End Time 3]\n[Start Time 4] to [End Time 4]\n\n\n\nStep 4. Once the patient selects a slot number, display the confirmation layout using the data inherited from the parent workflow:\nConfirmation Summary:\n\nPatient Name: [Patient Name]\n\nMobile Number: [Mobile Number]\n\nIssue: [Issue]\n\nAge & Gender: [Age],[Gender]\n\nDate: [Date]\n\nTime: [Start Time] to [End Time]\n\nDr. Name: [Dr Name]\n\nDepartment: [Department]\n\nFee: [Fee]\nIf above details are correct, Shall i book?\nStep 5. On receiving confirmation (\"Yes\", \"Ok\", \"Done\", \"Book\"), output the final transaction data block.\nCRITICAL PROTOCOL (HARD STOP): Do not use, call, or invoke any tools, memory managers, or background functions during this step. Do not add conversational pleasantries. Output ONLY the raw JSON string starting with { and ending with } as your final message response turn. Extract the fields immediately from the active conversation context:\nBooking: {\"intent\":\"booking confirmed\",\"patientName\":\"\",\"mobile\":\"\",\"department\":\"\",\"doctorName\":\"\",\"issue\":\"\",\"age\":\"\",\"gender\":\"\",\"date\":\"\",\"startTime\":\"\",\"endTime\":\"\",\"fee\":\"\",\"calendarId\":\"\"}\nSTRICT RULES\n\nAlways give absolute priority to the patient's preferred time.\nAlways use Data from Users Prompt and do not ask again for the provided data.\nDo not hallucinate slots.\nFor non-booking queries: \"For more assistance, please call 0321-1234567\"\nUnderstand human intent regarding general timings:\n\nMorning = Start calculating from 10:00 AM\nEvening = Start calculating from 04:00 PM",
+          "maxIterations": 10
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        1152,
+        -784
+      ],
+      "id": "345387f7-b32e-480a-85d6-79fd8c1589e0",
+      "name": "New Appointment",
+      "notesInFlow": false,
+      "retryOnFail": true,
+      "waitBetweenTries": 3000,
+      "maxTries": 3
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "=Match Department with Calendar ID and return with Calendar ID (Mendatory)",
+        "documentId": {
+          "__rl": true,
+          "value": "1Sjk9V1yNY3YCEpjfMzdWZR9AbOYfyhczdBDh0ACDkp0",
+          "mode": "list",
+          "cachedResultName": "Hospital Management System",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Sjk9V1yNY3YCEpjfMzdWZR9AbOYfyhczdBDh0ACDkp0/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1157756843,
+          "mode": "list",
+          "cachedResultName": "Drs List",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Sjk9V1yNY3YCEpjfMzdWZR9AbOYfyhczdBDh0ACDkp0/edit#gid=1157756843"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        1424,
+        -416
+      ],
+      "id": "d60e723f-e54a-47ea-96f9-90ad4266ffc1",
+      "name": "Drs List Tool",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "VRRh3M0FvZKBrGW0",
+          "name": "kaminoor84"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "=Use this tool STRICTLY during \"RULE 1: NEW APPOINTMENT (Step 6)\" immediately after the doctor's name and department have been verified via the Drs List Tool, and the patient's Age, Gender, and Issue have been successfully collected. \n\nTo execute this tool successfully, you MUST extract and provide exactly two dynamic arguments from your current session memory parameters:\n1. \"date\" - The upcoming target date to check, strictly formatted as a string in 'yyyy-MM-dd' format (e.g., '2026-05-26'). Calculate this exact date based on the current context day: {{ $now.setZone('Asia/Karachi').format('cccc, d MMMM yyyy') }}.\n\nCRITICAL BEHAVIOR RULES:\nCRITICAL BEHAVIOR RULES:\n- This tool is purely a READ operation to check existing booked events in the Asia/Karachi time zone for the specified block.\n- IMPORTANT: If this tool returns \"No output data returned\" or an empty array [], it means the doctor has 0 bookings for this day. This means ALL slots (10:00 AM to 1:00 PM and 2:00 PM to 6:00 PM) are 100% free and available.\n- If empty, do not re-run the tool. Immediately display the full list of open slots starting from their preferred hour (e.g., 11:00 AM, 11:15 AM, 11:30 AM, 11:45 AM) to the patient.\n- Inherit the Doctor's name and fee directly from your parent message history context window; do not look for them inside this tool's response.",
+        "operation": "getAll",
+        "calendar": {
+          "__rl": true,
+          "value": "={{ $fromAI(\"Calendar_ID\") }}",
+          "mode": "id"
+        },
+        "timeMin": "={{ DateTime.fromFormat($fromAI(\"date\"), 'yyyy-MM-dd', { zone: 'Asia/Karachi' }).set({ hour: 10, minute: 0, second: 0 }).toISO({ includeOffset: true }) }}",
+        "timeMax": "={{ DateTime.fromFormat($fromAI(\"date\"), 'yyyy-MM-dd', { zone: 'Asia/Karachi' }).set({ hour: 18, minute: 0, second: 0 }).toISO({ includeOffset: true }) }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.3,
+      "position": [
+        1312,
+        -432
+      ],
+      "id": "a9b92e03-e6b9-46f5-ae61-3abd9e51e81a",
+      "name": "Time Slot Tool",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "CuXKbTgFvcMEPT19",
+          "name": "kaminoor84"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        1024,
+        -432
+      ],
+      "id": "e8e19661-620e-4f60-9632-c1e5f3fdd57e",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "icETtaRNX99UUPUM",
+          "name": "kaminoor"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "5d270b6b-6faa-4a1d-8746-7f07642b98e9",
+              "leftValue": "={{ $json.intent }}",
+              "rightValue": "booking confirmed",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        1664,
+        -784
+      ],
+      "id": "cc60eb2a-58f0-4d55-b52d-f2f4d3c6fdb6",
+      "name": "If3"
+    },
+    {
+      "parameters": {
+        "jsCode": "function convertTimeTo24h(timeStr) {\n  if (!timeStr) return \"00:00\";\n  timeStr = String(timeStr).trim();\n\n  // 24-hour format: \"15:15\" or \"15:15:00\"\n  const match24h = timeStr.match(/^(\\d{1,2}):(\\d{2})(?::\\d{2})?$/);\n  if (match24h) {\n    const hours   = String(parseInt(match24h[1], 10)).padStart(2, '0');\n    const minutes = match24h[2];\n    return `${hours}:${minutes}`;\n  }\n\n  // 12-hour format: \"4:00 PM\" or \"04:00 AM\"\n  const match12h = timeStr.match(/^(\\d{1,2}):(\\d{2})\\s*(AM|PM)$/i);\n  if (match12h) {\n    let hours      = parseInt(match12h[1], 10);\n    const minutes  = match12h[2];\n    const period   = match12h[3].toUpperCase();\n    if (period === 'AM') { if (hours === 12) hours = 0; }\n    else                 { if (hours !== 12) hours += 12; }\n    return `${String(hours).padStart(2, '0')}:${minutes}`;\n  }\n\n  return \"00:00\";\n}\n\nfunction buildISO(dateStr, timeFormatted, tzOffset = \"+05:00\") {\n  if (!dateStr || !timeFormatted) return null;\n  // Append \":00\" seconds only for ISO (Google Calendar requires HH:MM:SS)\n  return `${dateStr}T${timeFormatted}:00${tzOffset}`;\n}\n\nfunction extractBooking(raw) {\n  if (!raw) return null;\n  if (typeof raw === 'object' && !Array.isArray(raw) && raw.intent) return raw;\n  if (typeof raw !== 'string') return null;\n\n  const str = raw.trim();\n\n  if (str.startsWith('{')) {\n    try {\n      const parsed = JSON.parse(str);\n      if (parsed && parsed.intent) return parsed;\n    } catch (e) {}\n  }\n\n  const firstBrace = str.indexOf('{');\n  const lastBrace  = str.lastIndexOf('}');\n  if (firstBrace !== -1 && lastBrace > firstBrace) {\n    try {\n      const parsed = JSON.parse(str.slice(firstBrace, lastBrace + 1));\n      if (parsed && parsed.intent) return parsed;\n    } catch (e) {}\n  }\n\n  return null;\n}\n\n// ========================================\n// MAIN LOGIC\n// ========================================\n\nconst item    = $input.first();\nconst raw     = item.json.output;\nconst booking = extractBooking(raw);\n\n// CASE 1: Plain chat\nif (!booking) {\n  const plainText = (typeof raw === 'string') ? raw : JSON.stringify(raw ?? \"\");\n  return [{\n    json: {\n      isIntent             : false,\n      intent               : \"normal chat\",\n      patientName          : null,\n      mobile               : null,\n      department           : null,\n      doctorName           : null,\n      issue                : null,\n      age                  : null,\n      gender               : null,\n      fee                  : null,\n      calendarId           : null,\n      appointmentDate      : null,\n      startTimeFormatted   : \"00:00\",\n      endTimeFormatted     : \"00:00\",\n      startISO             : null,\n      endISO               : null,\n      conversationalReply  : plainText,\n    }\n  }];\n}\n\n// CASE 2: Booking JSON\nconst intentRaw       = (booking.intent || \"\").toLowerCase().trim();\nconst isIntent        = intentRaw === \"booking confirmed\";\n\nconst patientName     = booking.patientName  || null;\nconst mobile          = booking.mobile       || null;\nconst department      = booking.department   || null;\nconst doctorName      = booking.doctorName   || null;\nconst issue           = booking.issue        || null;\nconst age             = booking.age          || null;\nconst gender          = booking.gender       || null;\nconst appointmentDate = booking.date         || null;\nconst calendarId      = booking.calendarId   || null;\n\n// ✅ Fee with PKR suffix\nconst rawFee = booking.fee;\nconst fee    = rawFee ? `${rawFee} PKR` : null;\n\n// ✅ Time without seconds: \"16:00\", \"16:15\"\nconst startTimeFormatted = convertTimeTo24h(booking.startTime);\nconst endTimeFormatted   = convertTimeTo24h(booking.endTime);\n\n// ISO keeps seconds for Google Calendar: \"2026-06-27T16:00:00+05:00\"\nconst startISO = buildISO(appointmentDate, startTimeFormatted, \"+05:00\");\nconst endISO   = buildISO(appointmentDate, endTimeFormatted,   \"+05:00\");\n\nconst conversationalReply = JSON.stringify(booking);\n\nreturn [{\n  json: {\n    isIntent,\n    intent: intentRaw,\n    patientName,\n    mobile,\n    department,\n    doctorName,\n    issue,\n    age,\n    gender,\n    fee,                      // ✅ \"1200 PKR\"\n    calendarId,\n    appointmentDate,\n    startTimeFormatted,       // ✅ \"16:00\"\n    endTimeFormatted,         // ✅ \"16:15\"\n    startISO,                 // \"2026-06-27T16:00:00+05:00\"  (Google Calendar)\n    endISO,                   // \"2026-06-27T16:15:00+05:00\"  (Google Calendar)\n    conversationalReply,\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1504,
+        -784
+      ],
+      "id": "053e15fe-b323-4794-92e0-bdb8cb39b6ef",
+      "name": "Code in JavaScript1"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Create an event": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet": {
+      "main": [
+        [
+          {
+            "node": "Text Sender1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "New Appointment",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Text Sender1": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "New Appointment",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update row in sheet1": {
+      "main": [
+        [
+          {
+            "node": "Send message5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger1": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet1": {
+      "main": [
+        [
+          {
+            "node": "Update row in sheet1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If2": {
+      "main": [
+        [
+          {
+            "node": "Send message3",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Code in JavaScript5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript5": {
+      "main": [
+        [
+          {
+            "node": "If5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If5": {
+      "main": [
+        [
+          {
+            "node": "Send message3",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "HTTP Request8",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload an asset from file data": {
+      "main": [
+        [
+          {
+            "node": "Audio Sender",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request8": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript4": {
+      "main": [
+        [
+          {
+            "node": "Upload an asset from file data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet2": {
+      "main": [
+        [
+          {
+            "node": "Delete rows or columns from sheet1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "New Appointment": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Drs List Tool": {
+      "ai_tool": [
+        [
+          {
+            "node": "New Appointment",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Time Slot Tool": {
+      "ai_tool": [
+        [
+          {
+            "node": "New Appointment",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "New Appointment",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If3": {
+      "main": [
+        [
+          {
+            "node": "Create an event",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "If2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript1": {
+      "main": [
+        [
+          {
+            "node": "If3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false,
+    "timeSavedMode": "fixed",
+    "timezone": "Asia/Karachi",
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "versionId": "a81cb065-3148-493b-89b6-e4cd97c06c99",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "920c4e5278a15531d84dbf6f08effc6e93b5e1fe7aa67dfade5d207272cfae92"
+  },
+  "id": "btkoee9Byf5zGOCJ",
+  "tags": []
+}
