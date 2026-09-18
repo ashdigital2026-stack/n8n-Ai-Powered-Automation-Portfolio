@@ -1,0 +1,1432 @@
+{
+  "name": "RAG-Powered AI Receptionist & Appointment Manager",
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "messages"
+        ],
+        "options": {}
+      },
+      "type": "n8n-nodes-base.whatsAppTrigger",
+      "typeVersion": 1,
+      "position": [
+        -240,
+        -112
+      ],
+      "id": "4b92f84b-9100-47a3-85e0-c96b82121af5",
+      "name": "WhatsApp Trigger",
+      "webhookId": "80c578ef-492e-46c1-ad8b-dee9134128e3",
+      "credentials": {
+        "whatsAppTriggerApi": {
+          "id": "g765QKnQ9FsVkzKF",
+          "name": "ASH Account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "send",
+        "phoneNumberId": "1211048668765537",
+        "recipientPhoneNumber": "={{ $('WhatsApp Trigger').item.json.messages[0].from }}",
+        "textBody": "={{ $('Code in JavaScript2').item.json.reply }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.whatsApp",
+      "typeVersion": 1.1,
+      "position": [
+        1168,
+        -496
+      ],
+      "id": "651b0a87-41d5-48d0-ad9d-e8883d98c6a8",
+      "name": "Send message",
+      "webhookId": "6aac6e75-a0c9-4e41-9f97-42cf35e59aa4",
+      "credentials": {
+        "whatsAppApi": {
+          "id": "Z6HdMOJ7SFWkdkXM",
+          "name": "Ash Account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Compute clinic-local date/time context so the agent never has to guess 'today'.\nconst tz = 'Asia/Karachi';\nconst now = new Date(new Date().toLocaleString('en-US', { timeZone: tz }));\nconst dayNames = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];\nconst pad = (n) => String(n).padStart(2, '0');\nconst fmtDate = (d) => `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;\n\nconst days = [];\nfor (let i = 0; i <= 3; i++) {\n  const d = new Date(now);\n  d.setDate(now.getDate() + i);\n  days.push({ date: fmtDate(d), day_name: dayNames[d.getDay()], is_sunday: d.getDay() === 0 });\n}\n\nconst currentTime = `${pad(now.getHours())}:${pad(now.getMinutes())}`;\nconst next3 = days.slice(1).map(d => `${d.day_name} ${d.date}${d.is_sunday ? ' (CLOSED - Sunday)' : ''}`).join(', ');\n\nconst date_context_text = `Today is ${days[0].day_name}, ${days[0].date}. Current clinic time is ${currentTime} (PKT, Asia/Karachi). The next 3 days are: ${next3}. Clinic is closed all day Sunday.`;\n\nconst incoming = $input.first().json;\nreturn [{ json: { ...incoming, date_context_text, today_date: days[0].date, today_day_name: days[0].day_name, current_time: currentTime } }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -64,
+        -112
+      ],
+      "id": "c997db0f-fe40-4f25-8b19-46214dfcf013",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "calendar": {
+          "__rl": true,
+          "value": "learningfb84@gmail.com",
+          "mode": "list",
+          "cachedResultName": "learningfb84@gmail.com"
+        },
+        "timeMin": "={{ $now.startOf('day').set({ hour: 10, minute: 0, second: 0 }).toISO() }}",
+        "timeMax": "={{ $now.startOf('day').plus({ days: 3 }).set({ hour: 18, minute: 0, second: 0 }).toISO() }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleCalendar",
+      "typeVersion": 1.3,
+      "position": [
+        144,
+        -112
+      ],
+      "id": "59df7703-4d2b-4f32-8649-c0cf07da2d2b",
+      "name": "Get many events",
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "sUc6Ci2KlUf2VdCh",
+          "name": "Learning"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Grab all incoming items (e.g., 3 calendar events)\nconst items = $input.all();\n\n// 1. Process and format every calendar event into a clean array\nconst busySlotsList = items.map(item => {\n  const startIso = item.json.start?.dateTime || item.json.start;\n  const endIso = item.json.end?.dateTime || item.json.end;\n\n  if (!startIso || !endIso) {\n    return {\n      \"Date\": \"N/A\",\n      \"Time Slot\": \"N/A\"\n    };\n  }\n\n  // Extract Date (YYYY-MM-DD)\n  const formattedDate = startIso.split('T')[0];\n\n  // Extract HH:MM directly from ISO string without timezone shifts\n  const extractTimeStr = (isoString) => {\n    const timePart = isoString.split('T')[1];\n    if (!timePart) return \"00:00\";\n    const [hours, minutes] = timePart.split(':');\n    return `${hours}:${minutes}`;\n  };\n\n  const startTimeStr = extractTimeStr(startIso);\n  const endTimeStr = extractTimeStr(endIso);\n\n  return {\n    \"Date\": formattedDate,\n    \"Time Slot\": `${startTimeStr} to ${endTimeStr}`\n  };\n}).filter(slot => slot.Date !== \"N/A\"); // Remove empty/invalid slots\n\n// 2. Extract base user message details from the first item\nconst firstItemJson = items[0]?.json || {};\n\n// 3. Return as 1 SINGLE ITEM to prevent AI Agent duplicate executions\nreturn [{\n  json: {\n    ...firstItemJson,\n    busy_slots_list: busySlotsList\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        304,
+        -112
+      ],
+      "id": "94b78124-e2ca-44b1-8815-71c6a83a9cdb",
+      "name": "Code in JavaScript1"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json['Patient Message'] }}",
+        "options": {
+          "systemMessage": "=You are the AI receptionist for Pak International Hospital. Match the patient's language (English/Urdu).\n\nCONTEXT:\n- Time: \n{{ $json.date_context_text }}\n- Phone: \n{{ $json['Patient Phone Number'] }}\n- Busy Slots: \n{{ $('Code in JavaScript1').item.json.busy_slots_list && $('Code in JavaScript1').item.json.busy_slots_list.length > 0 ? $('Code in JavaScript1').item.json.busy_slots_list.map(slot => `${slot.Date} ${slot['Time Slot']}`).join(' | ') : \"None\" }}\n\nRULES: Dr. Kamran Noor (Cardiologist) | Fee: Rs 2000 | Hours: 10AM-6PM (Closed Sun, Lunch 1-2PM) | Slots: 20 min.\n\n==================================================\n1. NEW BOOKING\n==================================================\nStep 1: Collect Name, Age, Gender, Symptoms, Preferred Date & Time.\n- Convert relative dates (\"tomorrow\" etc.) to YYYY-MM-DD.\n- Compare requested time to BUSY SLOTS (14:00=02:00PM, 15:00=03:00PM, 16:00=04:00PM). If busy, skip it.\n- Offer exactly 4 free 20-min slots as a numbered list, each showing full Start-End time, e.g.:\n1. 02:00 PM - 02:20 PM\n2. 02:20 PM - 02:40 PM\n3. 03:00 PM - 03:20 PM\n4. 03:20 PM - 03:40 PM\nAsk patient to pick a number.\n\nStep 2: Confirmation Summary (action:\"normal_chat\", data:{}):\n\"Please review your details:\n* Operation: Booking\n* Doctor: Dr. Kamran Noor\n* Name: [Name] | Age: [Age] | Gender: [Gender]\n* Mobile: [Mobile Number]\n* Symptoms: [Symptoms]\n* Date: [YYYY-MM-DD]\n* Time Slot: [Start Time] - [End Time]\n* Fee: Rs 2000\n\nReply YES to confirm.\"\n\nStep 3: On \"YES\", output final JSON (extract from summary):\n{\"reply\": \"Thank you! Your appointment is confirmed for [YYYY-MM-DD], [Start Time] - [End Time].\",\"action\": \"book\",\"data\": {\"patient_name\": \"[Name]\", \"mobile_number\": \"{{ $('Extract Patient Message1').item.json.phone_number }}\", \"age\": [Age], \"gender\": \"[Gender]\", \"symptoms\": \"[Symptoms]\", \"appointment_date\": \"[YYYY-MM-DD]\", \"time_slot\": \"[Start Time] - [End Time]\", \"start_datetime\": \"[YYYY-MM-DDTHH:MM:SS+05:00]\", \"end_datetime\": \"[YYYY-MM-DDTHH:MM:SS+05:00]\", \"fee\": 2000}}\n\n==================================================\n2. RESCHEDULE\n==================================================\nStep 1: Call 'Lookup_Patient_Appointment' with phone number to get current appointment details.\nStep 2: Ask preferred new Date & Time.\nStep 3: Offer 4 free slots exactly as in Booking Step 1 (full Start-End time each).\nStep 4: Confirmation Summary (action:\"normal_chat\", data:{}):\n\"Please review your rescheduling details:\n* Operation: Reschedule\n* Doctor: Dr. Kamran Noor\n* Patient Name: [Name]\n* Mobile: [Mobile Number]\n* New Date: [YYYY-MM-DD]\n* New Time Slot: [Start Time] - [End Time]\n\nReply YES to confirm.\"\n\nStep 5: On \"YES\", output final JSON (extract from history):\n{\"reply\": \"Your appointment has been rescheduled to [YYYY-MM-DD], [Start Time] - [End Time].\",\"action\": \"reschedule\",\"data\": {\"patient_name\": \"[Name]\", \"mobile_number\": \"{{ $('Extract Patient Message1').item.json.phone_number }}\", \"new_appointment_date\": \"[YYYY-MM-DD]\", \"new_time_slot\": \"[Start Time] - [End Time]\", \"start_datetime\": \"[YYYY-MM-DDTHH:MM:SS+05:00]\", \"end_datetime\": \"[YYYY-MM-DDTHH:MM:SS+05:00]\"}}\n\n==================================================\n3. CANCELLATION\n==================================================\nStep 1: Call 'Lookup_Patient_Appointment' with phone number to get appointment details.\nStep 2: Confirmation Summary (action:\"normal_chat\", data:{}):\n\"Are you sure you want to cancel your appointment?\n* Operation: Cancellation\n* Doctor: Dr. Kamran Noor\n* Patient Name: [Name]\n* Mobile: [Mobile Number]\n* Date: [YYYY-MM-DD]\n* Time Slot: [Start Time] - [End Time]\n\nReply YES to confirm cancellation.\"\n\nStep 3: On \"YES\", output final JSON (extract from history):\n{\"reply\": \"Your appointment for [YYYY-MM-DD], [Start Time] - [End Time] has been cancelled.\",\"action\": \"cancel\",\"data\": {\"patient_name\": \"[Name]\", \"mobile_number\": \"{{ $('Extract Patient Message1').item.json.phone_number }}\", \"appointment_date\": \"[YYYY-MM-DD]\", \"time_slot\": \"[Start Time] - [End Time]\"}}\n\n==================================================\n4. GENERAL INQUIRIES & KNOWLEDGE BASE (RAG)\n==================================================\nStep 1: If the user query is about hospital policies, general medical queries, doctor details, services, or hospital guidelines, call the tool `Supabase Vector Store1`.\nStep 2: Use ONLY the information retrieved from `Supabase Vector Store1` to answer the user's question directly, clearly, and concisely.\nStep 3: If the knowledge base does not contain the answer, politely inform the user that you don't have that specific information and offer to transfer them to human support.\nStep 4: Keep the response formatted using the standard JSON structure: action set to \"normal_chat\" and data set to {}.\n\n==================================================\nEMERGENCY SAFETY OVERRIDE\n==================================================\n- If a patient mentions critical emergency symptoms (e.g., severe crushing chest pain, extreme shortness of breath, loss of consciousness, stroke symptoms):\n  └─ DO NOT proceed with routine booking. Immediately advise them to visit the 24/7 Emergency Room (ER) or call emergency services right away. Set action to \"normal_chat\".\n\n==================================================\nSTRICT OUTPUT RULES\n==================================================\n1. Every reply is ONLY valid raw JSON: \"reply\" (string), \"action\" (\"normal_chat\"/\"book\"/\"reschedule\"/\"cancel\"), \"data\" (object) — no text outside the JSON.\n2. On \"YES\"/\"CONFIRM\", never error — pull all values from the last confirmation summary in chat history.\n3. Time Slot always shown as \"Start Time - End Time\" in every summary and JSON, for both booking and rescheduling."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        624,
+        -112
+      ],
+      "id": "c3c1f944-6ced-43f2-a87f-cf6c23020b75",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.5-flash",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        608,
+        80
+      ],
+      "id": "1cd52160-6f4c-4647-9c63-6303fa103bf1",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "x4wEAUi4XLxVRcGg",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "46003023-a1c5-4c99-98d3-60a996277397",
+              "name": "Patient Phone Number",
+              "value": "={{ $('WhatsApp Trigger').item.json.messages[0].from }}",
+              "type": "string"
+            },
+            {
+              "id": "52823eba-d08d-4f9a-90e0-d97c4d6fd7e7",
+              "name": "Patient Message",
+              "value": "={{ $('WhatsApp Trigger').item.json.messages[0].text.body }}",
+              "type": "string"
+            },
+            {
+              "id": "0902cc55-8168-4ac8-92c5-2d0b3bb3839c",
+              "name": "date_context_text",
+              "value": "={{ $('Code in JavaScript').item.json.date_context_text }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        464,
+        -112
+      ],
+      "id": "cf9e6a8b-9b3e-4a71-a205-6b2f2473ecd8",
+      "name": "Extract Patient Message1"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1AYFPMmsDi2DV35VmISztZW5IsBTkcKlmIEjnh_nBUTk",
+          "mode": "list",
+          "cachedResultName": "n8n-Document",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1AYFPMmsDi2DV35VmISztZW5IsBTkcKlmIEjnh_nBUTk/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Patient Data",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1AYFPMmsDi2DV35VmISztZW5IsBTkcKlmIEjnh_nBUTk/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Mobile Number",
+              "lookupValue": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('values0_Value', ``, 'string') }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        848,
+        96
+      ],
+      "id": "de214ad1-31da-42f2-9a7b-ba699ae84b44",
+      "name": "Lookup_Patient_Appointment",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "kGFu5i1Yve3CCoQv",
+          "name": "learning"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "return $input.all().map(item => {\n  // 1. Grab raw output string from AI Agent\n  let rawOutput = item.json.output?.text || item.json.output || item.json.text || item.json.reply || item.json;\n  \n  if (typeof rawOutput === 'object' && rawOutput !== null) {\n    if (rawOutput.reply) return { json: { isAction: false, action: rawOutput.action || \"normal_chat\", reply: rawOutput.reply, data: rawOutput.data || {} } };\n    rawOutput = JSON.stringify(rawOutput);\n  }\n\n  let cleanText = String(rawOutput || \"\").trim();\n\n  // Helper function to force clean line breaks\n  const formatText = (str) => {\n    if (typeof str !== 'string') return str;\n    return str\n      .replace(/\\\\\\\\n/g, '\\n')\n      .replace(/\\\\n/g, '\\n')\n      .replace(/\\\\\"/g, '\"')\n      .replace(/\\\\\\\\/g, '\\\\')\n      .split(/\\r?\\n/)\n      .join(String.fromCharCode(10));\n  };\n\n  const tryParseJSON = (str) => {\n    try { return JSON.parse(str); } catch (e) { return null; }\n  };\n\n  // Strip Markdown code blocks if present\n  if (cleanText.includes(\"```\")) {\n    cleanText = cleanText.replace(/```(?:json)?/gi, \"\").replace(/```/g, \"\").trim();\n  }\n\n  // Attempt JSON parsing\n  let parsedObj = tryParseJSON(cleanText);\n  if (!parsedObj) {\n    const jsonMatch = cleanText.match(/\\{[\\s\\S]*\\}/);\n    if (jsonMatch) parsedObj = tryParseJSON(jsonMatch[0]);\n  }\n\n  // 2. If valid JSON object with reply\n  if (parsedObj && typeof parsedObj === 'object' && parsedObj.reply) {\n    const action = String(parsedObj.action || \"normal_chat\").toLowerCase();\n    const isFinalAction = [\"book\", \"reschedule\", \"cancel\"].includes(action);\n\n    return {\n      json: {\n        isAction: isFinalAction,\n        action: action,\n        reply: formatText(parsedObj.reply),\n        data: parsedObj.data || {}\n      }\n    };\n  }\n\n  // 3. Fallback: If output is empty or plain text, provide a valid structured output\n  const fallbackReply = cleanText && cleanText !== \"[object Object]\" \n    ? formatText(cleanText) \n    : \"Thank you for contacting Pak International Hospital. How can I assist you with your appointment today?\";\n\n  return {\n    json: {\n      isAction: false,\n      action: \"normal_chat\",\n      reply: fallbackReply,\n      data: {}\n    }\n  };\n});"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        880,
+        -112
+      ],
+      "id": "9c2ce4f0-1809-4cba-955c-e1101363df52",
+      "name": "Code in JavaScript2"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.action }}",
+                    "rightValue": "normal_chat",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "ec1ea0e1-a216-4a01-8488-1f4a5a94f5fc"
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "fa48eae8-69db-4a81-a8ae-6ae2b032c16a",
+                    "leftValue": "={{ $json.action }}",
+                    "rightValue": "book",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "9bb4ba73-4c01-4655-8061-7a1a7c860d0d",
+                    "leftValue": "={{ $json.action }}",
+                    "rightValue": "reschedule",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "938c2016-4a83-4144-9656-1b9c117acf43",
+                    "leftValue": "={{ $json.action }}",
+                    "rightValue": "cancel",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        1040,
+        -144
+      ],
+      "id": "cafaf5e5-253d-4403-941f-ea6519a6533a",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "calendar": {
+          "__rl": true,
+          "value": "=Your Calendar ID",
+          "mode": "id"
+        },
+        "start": "={{ $('Code in JavaScript2').item.json.data.start_datetime }}",
+        "end": "={{ $('Code in JavaScript2').item.json.data.end_datetime }}",
+        "additionalFields": {
+          "description": "=Phone Number: {{ $('Code in JavaScript2').item.json.data.mobile_number }}\nAge: {{ $('Code in JavaScript2').item.json.data.age }}\nGender: {{ $('Code in JavaScript2').item.json.data.gender }}\nFee: PKR {{ $('Code in JavaScript2').item.json.data.fee }}",
+          "guestsCanInviteOthers": true,
+          "summary": "={{ $('Code in JavaScript2').item.json.data.patient_name }}  -  {{ $('Code in JavaScript2').item.json.data.symptoms }}"
+        }
+      },
+      "type": "n8n-nodes-base.googleCalendar",
+      "typeVersion": 1.3,
+      "position": [
+        1296,
+        -368
+      ],
+      "id": "c7e2c496-7aa9-4f94-80be-62309af61ec8",
+      "name": "Create an event",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "sUc6Ci2KlUf2VdCh",
+          "name": "Learning"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1AYFPMmsDi2DV35VmISztZW5IsBTkcKlmIEjnh_nBUTk",
+          "mode": "list",
+          "cachedResultName": "n8n-Document",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1AYFPMmsDi2DV35VmISztZW5IsBTkcKlmIEjnh_nBUTk/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Patient Data",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1AYFPMmsDi2DV35VmISztZW5IsBTkcKlmIEjnh_nBUTk/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Appointument Date": "={{ $('Code in JavaScript2').item.json.data.appointment_date }}",
+            "Time Slot Booked": "={{ $('Code in JavaScript2').item.json.data.time_slot }}",
+            "Department": "Cardiology ",
+            "Doctor Name": "Doctor Kamran Noor",
+            "Patient Name": "={{ $('Code in JavaScript2').item.json.data.patient_name }}",
+            "Mobile Number": "={{ $('Code in JavaScript2').item.json.data.mobile_number }}",
+            "Issue": "={{ $('Code in JavaScript2').item.json.data.symptoms }}",
+            "Age": "={{ $('Code in JavaScript2').item.json.data.age }}",
+            "Gender": "={{ $('Code in JavaScript2').item.json.data.gender }}",
+            "Fee": "={{ $('Code in JavaScript2').item.json.data.fee }}",
+            "Event ID": "={{ $json.id }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Appointument Date",
+              "displayName": "Appointument Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Time Slot Booked",
+              "displayName": "Time Slot Booked",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Department",
+              "displayName": "Department",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Doctor Name",
+              "displayName": "Doctor Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Patient Name",
+              "displayName": "Patient Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Mobile Number",
+              "displayName": "Mobile Number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Issue",
+              "displayName": "Issue",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Age",
+              "displayName": "Age",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Gender",
+              "displayName": "Gender",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Fee",
+              "displayName": "Fee",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Event ID",
+              "displayName": "Event ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1504,
+        -368
+      ],
+      "id": "435a4a21-cbd8-4ec8-8189-54b7bcfe94c6",
+      "name": "Append row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "kGFu5i1Yve3CCoQv",
+          "name": "learning"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "send",
+        "phoneNumberId": "1211048668765537",
+        "recipientPhoneNumber": "={{ $('WhatsApp Trigger').item.json.messages[0].from }}",
+        "textBody": "={{ $('Code in JavaScript2').item.json.reply }}\n\nPatient Name: {{ $('Code in JavaScript2').item.json.data.patient_name }}\nMobile Number:{{ $('Code in JavaScript2').item.json.data.mobile_number }}\nDoctor Name: Dr. Kamran Noor\nFee: {{ $('Code in JavaScript2').item.json.data.fee }}\n\nPlease arrive 20 mintues before the appointment time.\n\nThanks for choosing the Pak International Hospital.",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.whatsApp",
+      "typeVersion": 1.1,
+      "position": [
+        1712,
+        -368
+      ],
+      "id": "fba0e3dc-41e3-4480-84e0-ba4c420c5fe7",
+      "name": "Send message1",
+      "webhookId": "6aac6e75-a0c9-4e41-9f97-42cf35e59aa4",
+      "credentials": {
+        "whatsAppApi": {
+          "id": "Z6HdMOJ7SFWkdkXM",
+          "name": "Ash Account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1AYFPMmsDi2DV35VmISztZW5IsBTkcKlmIEjnh_nBUTk",
+          "mode": "list",
+          "cachedResultName": "n8n-Document",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1AYFPMmsDi2DV35VmISztZW5IsBTkcKlmIEjnh_nBUTk/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Patient Data",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1AYFPMmsDi2DV35VmISztZW5IsBTkcKlmIEjnh_nBUTk/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Mobile Number",
+              "lookupValue": "={{ $json.data.mobile_number }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1328,
+        -176
+      ],
+      "id": "0ec01b98-a7e3-4c3e-859e-9c961be9ac33",
+      "name": "Get row(s) in sheet1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "kGFu5i1Yve3CCoQv",
+          "name": "learning"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "calendar": {
+          "__rl": true,
+          "value": "=Your Calendar Id",
+          "mode": "id"
+        },
+        "eventId": "={{ $json['Event ID'] }}",
+        "updateFields": {
+          "end": "={{ $('Code in JavaScript2').item.json.data.end_datetime }}",
+          "start": "={{ $('Code in JavaScript2').item.json.data.start_datetime }}"
+        }
+      },
+      "type": "n8n-nodes-base.googleCalendar",
+      "typeVersion": 1.3,
+      "position": [
+        1552,
+        -176
+      ],
+      "id": "f59d31a8-0b9b-45c6-9ca2-f723e2cd48f7",
+      "name": "Update an event",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "sUc6Ci2KlUf2VdCh",
+          "name": "Learning"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1AYFPMmsDi2DV35VmISztZW5IsBTkcKlmIEjnh_nBUTk",
+          "mode": "list",
+          "cachedResultName": "n8n-Document",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1AYFPMmsDi2DV35VmISztZW5IsBTkcKlmIEjnh_nBUTk/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Patient Data",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1AYFPMmsDi2DV35VmISztZW5IsBTkcKlmIEjnh_nBUTk/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Appointument Date": "={{ $('Code in JavaScript2').item.json.data.new_appointment_date }}",
+            "Time Slot Booked": "={{ $('Code in JavaScript2').item.json.data.new_time_slot }}",
+            "Department": "Cardiology ",
+            "Doctor Name": "Doctor Kamran Noor",
+            "Patient Name": "={{ $('Code in JavaScript2').item.json.data.patient_name }}",
+            "Mobile Number": "={{ $('Code in JavaScript2').item.json.data.mobile_number }}",
+            "Issue": "={{ $('Get row(s) in sheet1').item.json.Issue }}",
+            "Age": "={{ $('Get row(s) in sheet1').item.json.Age }}",
+            "Gender": "={{ $('Get row(s) in sheet1').item.json.Gender }}",
+            "Fee": "={{ $('Get row(s) in sheet1').item.json.Fee }}",
+            "Event ID": "={{ $json.id }}",
+            "row_number": 0
+          },
+          "matchingColumns": [
+            "Mobile Number"
+          ],
+          "schema": [
+            {
+              "id": "Appointument Date",
+              "displayName": "Appointument Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Time Slot Booked",
+              "displayName": "Time Slot Booked",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Department",
+              "displayName": "Department",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Doctor Name",
+              "displayName": "Doctor Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Patient Name",
+              "displayName": "Patient Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Mobile Number",
+              "displayName": "Mobile Number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Issue",
+              "displayName": "Issue",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Age",
+              "displayName": "Age",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Gender",
+              "displayName": "Gender",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Fee",
+              "displayName": "Fee",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Event ID",
+              "displayName": "Event ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1792,
+        -176
+      ],
+      "id": "7eec1d43-a46d-45a9-9b5c-282363858567",
+      "name": "Update row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "kGFu5i1Yve3CCoQv",
+          "name": "learning"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "send",
+        "phoneNumberId": "1211048668765537",
+        "recipientPhoneNumber": "={{ $('WhatsApp Trigger').item.json.messages[0].from }}",
+        "textBody": "={{ $('Code in JavaScript2').item.json.reply }}\n\nPatient Name: {{ $('Code in JavaScript2').item.json.data.patient_name }}\nMobile Number:{{ $('Code in JavaScript2').item.json.data.mobile_number }}\nDoctor Name: Dr. Kamran Noor\nFee: {{ $json.Fee }}\n\nPlease arrive 20 mintues before the appointment time.\n\nThanks for choosing the Pak International Hospital.",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.whatsApp",
+      "typeVersion": 1.1,
+      "position": [
+        2032,
+        -176
+      ],
+      "id": "0f95a90c-90ad-4225-85f0-4a8a9604d0b6",
+      "name": "Send message2",
+      "webhookId": "6aac6e75-a0c9-4e41-9f97-42cf35e59aa4",
+      "credentials": {
+        "whatsAppApi": {
+          "id": "Z6HdMOJ7SFWkdkXM",
+          "name": "Ash Account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1AYFPMmsDi2DV35VmISztZW5IsBTkcKlmIEjnh_nBUTk",
+          "mode": "list",
+          "cachedResultName": "n8n-Document",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1AYFPMmsDi2DV35VmISztZW5IsBTkcKlmIEjnh_nBUTk/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Patient Data",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1AYFPMmsDi2DV35VmISztZW5IsBTkcKlmIEjnh_nBUTk/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Mobile Number",
+              "lookupValue": "={{ $json.data.mobile_number }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1344,
+        0
+      ],
+      "id": "574a8855-0620-4e1c-89ac-740d69d3f14a",
+      "name": "Get row(s) in sheet2",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "kGFu5i1Yve3CCoQv",
+          "name": "learning"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "delete",
+        "calendar": {
+          "__rl": true,
+          "value": "=Your Calendar Id",
+          "mode": "id"
+        },
+        "eventId": "={{ $json['Event ID'] }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleCalendar",
+      "typeVersion": 1.3,
+      "position": [
+        1584,
+        0
+      ],
+      "id": "6b40f0a1-adcb-4779-b8bc-262b665825ca",
+      "name": "Delete an event",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "sUc6Ci2KlUf2VdCh",
+          "name": "Learning"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1AYFPMmsDi2DV35VmISztZW5IsBTkcKlmIEjnh_nBUTk",
+          "mode": "list",
+          "cachedResultName": "n8n-Document",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1AYFPMmsDi2DV35VmISztZW5IsBTkcKlmIEjnh_nBUTk/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Patient Data",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1AYFPMmsDi2DV35VmISztZW5IsBTkcKlmIEjnh_nBUTk/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Mobile Number",
+              "lookupValue": "={{ $('Code in JavaScript2').item.json.data.mobile_number }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1824,
+        0
+      ],
+      "id": "67d28c9c-a8ad-4f4a-b2df-e47ab0365ad5",
+      "name": "Get row(s) in sheet3",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "kGFu5i1Yve3CCoQv",
+          "name": "learning"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "delete",
+        "documentId": {
+          "__rl": true,
+          "value": "1AYFPMmsDi2DV35VmISztZW5IsBTkcKlmIEjnh_nBUTk",
+          "mode": "list",
+          "cachedResultName": "n8n-Document",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1AYFPMmsDi2DV35VmISztZW5IsBTkcKlmIEjnh_nBUTk/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Patient Data",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1AYFPMmsDi2DV35VmISztZW5IsBTkcKlmIEjnh_nBUTk/edit#gid=0"
+        },
+        "startIndex": "={{ $json.row_number }}"
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        2080,
+        0
+      ],
+      "id": "555e5194-c56c-4037-9354-de101534310e",
+      "name": "Delete rows or columns from sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "kGFu5i1Yve3CCoQv",
+          "name": "learning"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "send",
+        "phoneNumberId": "1211048668765537",
+        "recipientPhoneNumber": "={{ $('WhatsApp Trigger').item.json.messages[0].from }}",
+        "textBody": "={{ $('Code in JavaScript2').item.json.reply }}\n\nPatient Name: {{ $('Code in JavaScript2').item.json.data.patient_name }}\nMobile Number:{{ $('Code in JavaScript2').item.json.data.mobile_number }}\nDoctor Name: Dr. Kamran Noor\n\n\nThanks for choosing the Pak International Hospital.",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.whatsApp",
+      "typeVersion": 1.1,
+      "position": [
+        2240,
+        0
+      ],
+      "id": "b49be865-4b5c-4cf8-a363-3a6d68465865",
+      "name": "Send message3",
+      "webhookId": "6aac6e75-a0c9-4e41-9f97-42cf35e59aa4",
+      "credentials": {
+        "whatsAppApi": {
+          "id": "Z6HdMOJ7SFWkdkXM",
+          "name": "Ash Account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "1DwQO-5jR7OoaXRnKXw6WXtAPA-753Vj-",
+          "mode": "list",
+          "cachedResultName": "hospital_policy_manual.pdf",
+          "cachedResultUrl": "https://drive.google.com/file/d/1DwQO-5jR7OoaXRnKXw6WXtAPA-753Vj-/view?usp=drivesdk"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        112,
+        -512
+      ],
+      "id": "e3fc2fc9-b781-41e1-ba56-4b7cb0715b65",
+      "name": "Download file",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "jMs80vT1iCwh0jsV",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "insert",
+        "tableName": {
+          "__rl": true,
+          "value": "documents",
+          "mode": "list",
+          "cachedResultName": "documents"
+        },
+        "embeddingBatchSize": 50,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
+      "typeVersion": 1.3,
+      "position": [
+        320,
+        -512
+      ],
+      "id": "a83c7993-45fc-4a6e-89f6-c3a0340fb954",
+      "name": "Supabase Vector Store",
+      "credentials": {
+        "supabaseApi": {
+          "id": "WExEVTbiF9D18iKF",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "dataType": "binary",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
+      "typeVersion": 1.1,
+      "position": [
+        464,
+        -304
+      ],
+      "id": "913c49b3-cb9a-4851-b97c-ad56ee543348",
+      "name": "Default Data Loader"
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.embeddingsGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        304,
+        -304
+      ],
+      "id": "249f7163-ef24-49ef-a8d5-310bc6422b32",
+      "name": "Embeddings Google Gemini",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "dnjQPlycX9hzCbs0",
+          "name": "Free Key"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "retrieve-as-tool",
+        "toolDescription": "Call this tool  to look up Hospital Policy Manual",
+        "tableName": {
+          "__rl": true,
+          "value": "documents",
+          "mode": "list",
+          "cachedResultName": "documents"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
+      "typeVersion": 1.3,
+      "position": [
+        976,
+        208
+      ],
+      "id": "3e3de297-9c59-48c4-8c6d-d63a70ff4854",
+      "name": "Supabase Vector Store1",
+      "credentials": {
+        "supabaseApi": {
+          "id": "WExEVTbiF9D18iKF",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $json['Patient Phone Number'] }}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryPostgresChat",
+      "typeVersion": 1.4,
+      "position": [
+        736,
+        192
+      ],
+      "id": "625add91-c2e2-4e8f-88b0-fcf3cc49ba97",
+      "name": "Postgres Chat Memory",
+      "credentials": {
+        "postgres": {
+          "id": "UBETtkmkSLFkQToB",
+          "name": "Postgres account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "WhatsApp Trigger": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send message": {
+      "main": [
+        []
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Get many events",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get many events": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript1": {
+      "main": [
+        [
+          {
+            "node": "Extract Patient Message1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Patient Message1": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lookup_Patient_Appointment": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript2": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Send message",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Create an event",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Get row(s) in sheet1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Get row(s) in sheet2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create an event": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet": {
+      "main": [
+        [
+          {
+            "node": "Send message1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet1": {
+      "main": [
+        [
+          {
+            "node": "Update an event",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update an event": {
+      "main": [
+        [
+          {
+            "node": "Update row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update row in sheet": {
+      "main": [
+        [
+          {
+            "node": "Send message2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet2": {
+      "main": [
+        [
+          {
+            "node": "Delete an event",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Delete an event": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet3": {
+      "main": [
+        [
+          {
+            "node": "Delete rows or columns from sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Delete rows or columns from sheet": {
+      "main": [
+        [
+          {
+            "node": "Send message3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download file": {
+      "main": [
+        [
+          {
+            "node": "Supabase Vector Store",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Default Data Loader": {
+      "ai_document": [
+        [
+          {
+            "node": "Supabase Vector Store",
+            "type": "ai_document",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings Google Gemini": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Supabase Vector Store",
+            "type": "ai_embedding",
+            "index": 0
+          },
+          {
+            "node": "Supabase Vector Store1",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Supabase Vector Store1": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Postgres Chat Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false,
+    "timeSavedMode": "fixed",
+    "timezone": "Asia/Karachi",
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "versionId": "6d35b978-6b7c-4a46-a1e4-b76ee765e811",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "2fb4d43ce117087aa193a82e568c90f06c844345789fe339c7ba68fa9a983e23"
+  },
+  "nodeGroups": [],
+  "id": "dSTwVVtqdg28vptz",
+  "tags": []
+}
