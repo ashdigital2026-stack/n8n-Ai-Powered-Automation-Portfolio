@@ -45,4 +45,4 @@ This end-to-end n8n workflow bridges autonomous AI generation with strict human 
 ---
 
 ### 📷 Workflow Architecture
-![Multi-Platform Auto-Poster Workflow Architecture](./screenshot.png)
+![Multi-Platform Auto-Poster Workflow Architecture](./sm_screenshot.PNG)
