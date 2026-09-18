@@ -6,8 +6,8 @@
 
 ### 🎥 Demonstration & Walkthrough
 * 📺 **YouTube Video Walkthrough:** [Watch System Demo on YouTube](https://www.youtube.com/watch?v=wr5PwvKmwY4)
-* 📄 **Workflow File:** `workflow.json` *(Available in this folder)*
-* 🖼️ **Architecture Diagram:** `screenshot.png` *(Available in this folder)*
+* 📄 **Workflow File:** `sm_workflow.json` *(Available in this folder)*
+* 🖼️ **Architecture Diagram:** `sm_screenshot.PNG` *(Available in this folder)*
 
 ---
 
