@@ -20,7 +20,7 @@ An enterprise-grade **Router-Worker Multi-Agent Architecture** running on n8n. A
 ---
 
 ### 💰 Cost Efficiency & Performance Engineering
-* **Ultra-Low Execution Cost:** Process ~140 complete bookings for **$1** or 1,000 bookings for **~$7** using optimized prompt structures and efficient model selection.
+* **Ultra-Low Execution Cost:** Process ~100 complete bookings for **$1** or 1,000 bookings for **~$10** using optimized prompt structures and efficient model selection.
 * **Token Preservation Architecture:** Isolates department contexts so heavy medical prompts are only invoked when a user enters that specific sub-workflow.
 * **Hybrid Voice/Text Native Handling:** Gracefully ingests voice notes and text inputs while responding in crisp, formatted text messages (supporting English & Roman Urdu).
 
