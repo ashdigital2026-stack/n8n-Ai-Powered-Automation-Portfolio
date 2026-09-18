@@ -1,0 +1,2836 @@
+{
+  "name": "Social Media Auto Posting  (Image/Reel + Slack Approval)",
+  "nodes": [
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "0d1b6b1b-1111-4a1a-9c1a-111111111111",
+              "leftValue": "={{ $('Code in JavaScript').item.json['Content Type'] }}",
+              "rightValue": "Image/Post",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        464,
+        976
+      ],
+      "id": "e2469083-5fc8-4791-837f-88416ee3076b",
+      "name": "Route by Content Type",
+      "notes": "TRUE = Image/Post (skip transcription, use title/caption text). FALSE = Video or Reel (transcribe audio track as before)."
+    },
+    {
+      "parameters": {
+        "jsCode": "// Build the AI input text for static Image / Post content (using incoming input item)\nconst inputItem = $input.first().json;\n\nconst title = inputItem['Title Name'] || inputItem['Title'] || '';\nconst brief = inputItem['Post Brief'] || inputItem['Description'] || '';\nconst sessionId = inputItem['Session ID'] || '';\n\nconst text = `Title: ${title}\\nBrief: ${brief}`.trim();\n\nreturn [{\n  json: {\n    text,\n    content_type: 'Image/Post',\n    'Session ID': sessionId,\n    ...inputItem\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        672,
+        960
+      ],
+      "id": "0c4ecc1f-ecf2-4ff7-a401-106457d7bb11",
+      "name": "Build Text From Title",
+      "notes": "Optional: add a 'Post Brief' or 'Description' column to the sheet so the AI has something to work with for static posts."
+    },
+    {
+      "parameters": {
+        "operation": "sendAndWait",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "C0BNU6YADFV",
+          "mode": "list",
+          "cachedResultName": "youtube-demo"
+        },
+        "message": "={{\n$json.revision_summary ? `*REVISION SUMMARY:*\\n${$json.revision_summary}\\n\\n---\\n\\n` : ''\n}}*New social post ready for review – {{ $json.content_type || 'Video' }}*\n\n*Facebook:*\n{{ ($json.fb_caption || 'N/A').slice(0, 400) }}\n\n*Instagram:*\n{{ ($json.ig_caption || 'N/A').slice(0, 400) }}\n\n*Threads:*\n{{ ($json.threads_caption || 'N/A').slice(0, 300) }}\n\n*LinkedIn:*\n{{ ($json.linkedin_caption || 'N/A').slice(0, 400) }}\n\n*TikTok:*\n{{ ($json.tiktok_caption || 'N/A').slice(0, 300) }}\n\n*YouTube Title:*\n{{ $json.yt_title || 'N/A' }}\n\n*YouTube Description:*\n{{ ($json.yt_description || 'N/A').slice(0, 400) }}",
+        "approvalOptions": {
+          "values": {
+            "approvalType": "double"
+          }
+        },
+        "options": {}
+      },
+      "id": "75310c2a-e55c-45a5-85a0-62c108379aa9",
+      "name": "Slack Approval",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.3,
+      "position": [
+        1600,
+        928
+      ],
+      "webhookId": "5e08a8fd-560c-4313-bf53-c3fcc9d95770",
+      "credentials": {
+        "slackApi": {
+          "id": "RNjIiYrZLB4N4tOJ",
+          "name": "Slack account 2"
+        }
+      },
+      "notes": "Uses Slack's built-in Send-and-Wait node. The workflow execution PAUSES here until someone clicks Approve or Reject in Slack — that click resumes this same execution automatically, no separate webhook wiring needed."
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "0d1b6b1b-2222-4a1a-9c1a-222222222222",
+              "leftValue": "={{ $json.data.approved }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1744,
+        928
+      ],
+      "id": "55e7d237-ad93-4ca0-9c6a-85dfc8dff4cd",
+      "name": "Check Approval",
+      "notes": "TRUE = human clicked Approve & Publish -> continue to platform posting. FALSE = Rejected -> log and stop."
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "0d1b6b1b-3333-4a1a-9c1a-333333333333",
+              "leftValue": "={{ $json.content_type }}",
+              "rightValue": "Image/Post",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2928,
+        176
+      ],
+      "id": "d8cc44d4-4f9e-4297-a3c0-92322daedf53",
+      "name": "Skip YouTube If",
+      "notes": "YouTube Shorts only makes sense for Video/Reel. Image/Post items are dropped here (no false-branch connection = simply stops)."
+    },
+    {
+      "parameters": {
+        "resource": "fileFolder",
+        "queryString": "={{ $json['Title Name'] }}",
+        "limit": 1,
+        "filter": {},
+        "options": {
+          "fields": [
+            "*"
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        64,
+        976
+      ],
+      "id": "fd94a15f-c6e4-4a0a-97b5-21ababf2b8d3",
+      "name": "Search files and folders1",
+      "alwaysOutputData": false,
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "jMs80vT1iCwh0jsV",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $json.id }}",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        2432,
+        768
+      ],
+      "id": "70c99b8d-a213-44ec-87e0-8d1f92bad221",
+      "name": "Download file1",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "jMs80vT1iCwh0jsV",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.openai.com/v1/audio/transcriptions",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBearerAuth",
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "model",
+              "value": "whisper-1"
+            },
+            {
+              "parameterType": "formBinaryData",
+              "name": "file",
+              "inputDataFieldName": "data"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "98f13502-d636-4f78-bc94-155d9b957ff2",
+      "name": "Transcribe Audio1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        688,
+        1120
+      ],
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "MXO9MUTpZe9wD8Ng",
+          "name": "Open AI Free Key"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Get raw LLM output text safely\nconst inputItem = $input.first().json;\nlet rawText = inputItem.output || inputItem.text || \"\";\n\n// Clean code blocks if present\nrawText = rawText.replace(/```json/g, \"\").replace(/```/g, \"\").trim();\n\nlet parsed = {};\ntry {\n  parsed = JSON.parse(rawText);\n} catch (e) {\n  // Fallback in case JSON parsing fails\n  parsed = {\n    is_final_draft: false,\n    chat_message: rawText,\n    revision_summary: \"\",\n    captions: {}\n  };\n}\n\nconst isFinal = parsed.is_final_draft ?? true;\nconst chatMessage = parsed.chat_message || \"\";\nconst summary = parsed.revision_summary || \"\";\nconst caps = parsed.captions || {};\n\n// Format human-readable Slack text\nlet slackFormattedText = \"\";\n\nif (!isFinal) {\n  // If rejection/chat mode, output conversational prompt\n  slackFormattedText = chatMessage || \"Draft declined. Please let me know what changes you would like.\";\n} else {\n  // If draft is ready (initial or revision), build structured output\n  let summaryHeader = summary ? `*REVISION SUMMARY:*\\n${summary}\\n\\n---\\n\\n` : \"\";\n\n  slackFormattedText = `${summaryHeader}*CURRENT REVISED DRAFT DETAILS*\\n` +\n    `*Content Type:* ${caps.content_type || 'N/A'}\\n\\n` +\n    `*Facebook:* ${caps.fb_caption || ''}\\n\\n` +\n    `*Instagram:* ${caps.ig_caption || ''}\\n\\n` +\n    `*Threads:* ${caps.threads_caption || ''}\\n\\n` +\n    `*LinkedIn:* ${caps.linkedin_caption || ''}\\n\\n` +\n    `*TikTok:* ${caps.tiktok_caption || ''}\\n\\n` +\n    `*YouTube Title:* ${caps.yt_title || ''}\\n\\n` +\n    `*YouTube Description:* ${caps.yt_description || ''}`;\n}\n\nreturn [{\n  json: {\n    is_final_draft: isFinal,\n    chat_message: chatMessage,\n    revision_summary: summary,\n    slack_formatted_text: slackFormattedText,\n    content_type: caps.content_type || \"\",\n    fb_caption: caps.fb_caption || \"\",\n    ig_caption: caps.ig_caption || \"\",\n    threads_caption: caps.threads_caption || \"\",\n    linkedin_caption: caps.linkedin_caption || \"\",\n    tiktok_caption: caps.tiktok_caption || \"\",\n    yt_title: caps.yt_title || \"\",\n    yt_description: caps.yt_description || \"\",\n    ...inputItem\n  }\n}];"
+      },
+      "id": "af75195f-09b3-41ac-94e5-2dffa881318c",
+      "name": "Parse Agent Output",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1328,
+        768
+      ]
+    },
+    {
+      "parameters": {
+        "httpRequestMethod": "POST",
+        "graphApiVersion": "v25.0",
+        "node": "1208633358995665",
+        "edge": "={{ $json.content_type === 'Image/Post' ? 'photos' : 'videos' }}",
+        "sendBinaryData": true,
+        "binaryPropertyName": "data",
+        "options": {
+          "queryParameters": {
+            "parameter": [
+              {
+                "name": "={{ $json.content_type === 'Image/Post' ? 'url' : 'file_url' }}",
+                "value": "="
+              },
+              {
+                "name": "={{ $json.content_type === 'Image/Post' ? 'caption' : 'description' }}",
+                "value": "={{ $('Parse Agent Output').item.json.fb_caption }}"
+              }
+            ]
+          }
+        }
+      },
+      "id": "71473aab-be38-40f9-b246-8966ecf681f8",
+      "name": "Post to FB Page",
+      "type": "n8n-nodes-base.facebookGraphApi",
+      "typeVersion": 1,
+      "position": [
+        2960,
+        560
+      ],
+      "credentials": {
+        "facebookGraphApi": {
+          "id": "6yAbHLhzuZmJcB8y",
+          "name": "FB Page + Insta API"
+        }
+      },
+      "notes": "edge and the media/caption param names now switch automatically between photos(url/caption) and videos(file_url/description) based on content_type."
+    },
+    {
+      "parameters": {
+        "httpRequestMethod": "POST",
+        "graphApiVersion": "v25.0",
+        "node": "17841448537639460",
+        "edge": "media",
+        "options": {
+          "queryParameters": {
+            "parameter": [
+              {
+                "name": "media_type",
+                "value": "={{ $json.content_type === 'Image/Post' ? 'IMAGE' : 'REELS' }}"
+              },
+              {
+                "name": "={{ $json.content_type === 'Image/Post' ? 'image_url' : 'video_url' }}",
+                "value": "={{ $json.secure_url }}"
+              },
+              {
+                "name": "caption",
+                "value": "=n8n testing"
+              }
+            ]
+          }
+        }
+      },
+      "id": "bd86b111-89a4-41af-99d8-694a9b824c97",
+      "name": "Create IG Media Container",
+      "type": "n8n-nodes-base.facebookGraphApi",
+      "typeVersion": 1,
+      "position": [
+        3120,
+        1008
+      ],
+      "credentials": {
+        "facebookGraphApi": {
+          "id": "6yAbHLhzuZmJcB8y",
+          "name": "FB Page + Insta API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "httpRequestMethod": "POST",
+        "graphApiVersion": "v25.0",
+        "node": "17841448537639460",
+        "edge": "media_publish",
+        "options": {
+          "queryParameters": {
+            "parameter": [
+              {
+                "name": "creation_id",
+                "value": "={{ $json.id }}"
+              }
+            ]
+          }
+        }
+      },
+      "id": "eff625fb-692d-4f6d-9058-8c89abe03ee3",
+      "name": "Publish IG Reel",
+      "type": "n8n-nodes-base.facebookGraphApi",
+      "typeVersion": 1,
+      "position": [
+        3824,
+        1104
+      ],
+      "credentials": {
+        "facebookGraphApi": {
+          "id": "6yAbHLhzuZmJcB8y",
+          "name": "FB Page + Insta API"
+        }
+      },
+      "notes": "IG containers take a few seconds to process. For production, poll /{creation_id}?fields=status_code before publishing, or add a Wait node here."
+    },
+    {
+      "parameters": {
+        "resource": "video",
+        "operation": "upload",
+        "title": "={{ $('Parse Agent Output').item.json.yt_title }}",
+        "regionCode": "US",
+        "categoryId": "28",
+        "options": {
+          "description": "={{ $('Parse Agent Output').item.json.yt_description }}",
+          "privacyStatus": "public"
+        }
+      },
+      "id": "20940d97-70c3-4520-a8ec-88ebac891df3",
+      "name": "Upload YouTube Short",
+      "type": "n8n-nodes-base.youTube",
+      "typeVersion": 1,
+      "position": [
+        3152,
+        160
+      ],
+      "credentials": {
+        "youTubeOAuth2Api": {
+          "id": "e9X6pzAnFWaIca5Z",
+          "name": "YouTube account"
+        }
+      },
+      "notes": "Native n8n YouTube node (uses YouTube Data API v3, OAuth2). For it to land in Shorts, keep the video vertical (9:16) and under 3 minutes, and add #Shorts in the title or description."
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://graph.threads.net/v1.0/28335132639411722/threads",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBearerAuth",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "media_type",
+              "value": "={{ $json.content_type === 'Image/Post' ? 'IMAGE' : 'VIDEO' }}"
+            },
+            {
+              "name": "={{ $json.content_type === 'Image/Post' ? 'image_url' : 'video_url' }}",
+              "value": "={{ $('Search files and folders').item.json.webContentLink }}"
+            },
+            {
+              "name": "text",
+              "value": "={{ $('Parse Agent Output').item.json.threads_caption }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "81a9e26d-290e-4850-885b-ee9894a00b58",
+      "name": "Create Threads Container",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2896,
+        1376
+      ],
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "uipivgzbVexLwy4Z",
+          "name": "For Demo Purpose"
+        }
+      },
+      "notes": "No dedicated Threads node in n8n, so this uses HTTP Request against the official Threads Graph API. media_type/url param now switch for Image/Post vs Video/Reel."
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://graph.threads.net/v1.0/28335132639411722/threads_publish",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBearerAuth",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "creation_id",
+              "value": "={{ $json.id }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "821392f2-1dc1-4f34-8428-7a3ab96a996c",
+      "name": "Publish Threads Post",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        3648,
+        1392
+      ],
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "uipivgzbVexLwy4Z",
+          "name": "For Demo Purpose"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://open.tiktokapis.com/v2/post/publish/video/init/",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $('Refresh Token1').item.json.access_token }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json; charset=UTF-8"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "post_info.title",
+              "value": "={{ $('Parse Agent Output').item.json.tiktok_caption || 'Automated TikTok Post #n8n' }}"
+            },
+            {
+              "name": "post_info.privacy_level",
+              "value": "SELF_ONLY"
+            },
+            {
+              "name": "post_info.disable_duet",
+              "value": "={{ false }}"
+            },
+            {
+              "name": "post_info.disable_stitch",
+              "value": "={{ false }}"
+            },
+            {
+              "name": "post_info.disable_comment",
+              "value": "={{ false }}"
+            },
+            {
+              "name": "source_info.source",
+              "value": "FILE_UPLOAD"
+            },
+            {
+              "name": "source_info.video_size",
+              "value": "={{ Math.round(parseFloat($('Download file1').first().binary.data.fileSize) * 1024 * 1024) }}"
+            },
+            {
+              "name": "source_info.chunk_size",
+              "value": "={{ Math.round(parseFloat($('Download file1').first().binary.data.fileSize) * 1024 * 1024) }}"
+            },
+            {
+              "name": "source_info.total_chunk_count",
+              "value": "={{ 1 }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        3344,
+        752
+      ],
+      "id": "a63cc974-a07c-4dda-8533-09486ba33949",
+      "name": "TikTok Container1"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://open.tiktokapis.com/v2/oauth/token/",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/x-www-form-urlencoded"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "form-urlencoded",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "client_key",
+              "value": "sbawklnpukx6vcgkco"
+            },
+            {
+              "name": "client_secret",
+              "value": "LP1xLP8tHqBUVE4CMFXx14Ub0mcjlBEL"
+            },
+            {
+              "name": "grant_type",
+              "value": "refresh_token"
+            },
+            {
+              "name": "refresh_token",
+              "value": "rft.vMgbrARvOYWVakUSXviKW3c21Esg8n6a84CohdSd7VZOmCCQ1vvbCopk1MJq!5942.s1"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        3168,
+        752
+      ],
+      "id": "3746e281-0783-4efd-88e9-0ecee52052c9",
+      "name": "Refresh Token1",
+      "notes": "SECURITY: the original file had a live client_key/secret/refresh_token hardcoded in plain text. Replace those with placeholders and move real values into an n8n credential (HTTP Header Auth or a custom TikTok credential) instead of the node body."
+    },
+    {
+      "parameters": {
+        "jsCode": "const container = $('TikTok Container1').first().json.data;\nconst videoItem = $('Download file1').first();\n\nif (!videoItem.binary || !videoItem.binary.data) {\n  throw new Error('No binary \"data\" found on Download file node output.');\n}\n\nconst binaryData = videoItem.binary.data;\nlet exactByteLength = 0;\n\n// 1. Check if n8n provides exact fileSizeBytes property directly\nif (binaryData.fileSizeBytes) {\n  exactByteLength = parseInt(binaryData.fileSizeBytes, 10);\n} \n// 2. Base64 memory mode (string must be long, not a short filesystem pointer)\nelse if (binaryData.data && binaryData.data.length > 1000) {\n  const buffer = Buffer.from(binaryData.data, 'base64');\n  exactByteLength = buffer.length;\n} \n// 3. Filesystem / Disk mode (retrieve real buffer via n8n helper)\nelse {\n  try {\n    const buffer = await this.helpers.getBinaryDataBuffer(0, 'data', 'Download file');\n    exactByteLength = buffer.length;\n  } catch (err) {\n    // Fallback: estimate bytes if helper call is restricted\n    const mb = parseFloat(binaryData.fileSize);\n    exactByteLength = Math.round(mb * 1024 * 1024);\n  }\n}\n\nif (!exactByteLength || exactByteLength < 100000) {\n  throw new Error(`Byte length calculation failed: evaluated to ${exactByteLength} bytes.`);\n}\n\nreturn [{\n  json: {\n    upload_url: container.upload_url,\n    publish_id: container.publish_id,\n    exactByteLength: exactByteLength\n  },\n  binary: {\n    data: binaryData\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3520,
+        752
+      ],
+      "id": "a04ce8c2-7542-49be-8c6f-ca3cd9a3e911",
+      "name": "Code in JavaScript1"
+    },
+    {
+      "parameters": {
+        "method": "PUT",
+        "url": "={{ $json.upload_url }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "video/mp4"
+            },
+            {
+              "name": "Content-Range",
+              "value": "=bytes 0-{{ $json.exactByteLength - 1 }}/{{ $json.exactByteLength }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "binaryData",
+        "inputDataFieldName": "data",
+        "options": {
+          "response": {
+            "response": {
+              "fullResponse": true
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        3696,
+        752
+      ],
+      "id": "e86d5db3-9836-4bb9-a729-584bd35389bc",
+      "name": "Tiktok Upload Node1"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1AYFPMmsDi2DV35VmISztZW5IsBTkcKlmIEjnh_nBUTk",
+          "mode": "list",
+          "cachedResultName": "n8n-Document",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1AYFPMmsDi2DV35VmISztZW5IsBTkcKlmIEjnh_nBUTk/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 991709918,
+          "mode": "list",
+          "cachedResultName": "Final Posting Status",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1AYFPMmsDi2DV35VmISztZW5IsBTkcKlmIEjnh_nBUTk/edit#gid=991709918"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "content_type": "={{ $('Parse Agent Output').item.json.content_type }}",
+            "status": "Published",
+            "Date": "={{ $('Code in JavaScript').item.json.Date }}",
+            "platform": "yt shorts"
+          },
+          "matchingColumns": [
+            "content_type"
+          ],
+          "schema": [
+            {
+              "id": "Date",
+              "displayName": "Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "content_type",
+              "displayName": "content_type",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "platform",
+              "displayName": "platform",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "1212b027-15ec-4633-b07a-de36a8159772",
+      "name": "Mark Row as Posted",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        3376,
+        160
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "kGFu5i1Yve3CCoQv",
+          "name": "learning"
+        }
+      },
+      "notes": "Runs once per platform post (harmless, just re-sets the same status). This is what stops the next run from re-processing the same video."
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "0d1b6b1b-3333-4a1a-9c1a-333333333333",
+              "leftValue": "={{ $('Parse Agent Output').item.json.content_type }}",
+              "rightValue": "Image/Post",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2944,
+        768
+      ],
+      "id": "a0790d21-00fd-4345-a0d8-2ceeb7757b37",
+      "name": "Skip YouTube If1",
+      "notes": "YouTube Shorts only makes sense for Video/Reel. Image/Post items are dropped here (no false-branch connection = simply stops)."
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1AYFPMmsDi2DV35VmISztZW5IsBTkcKlmIEjnh_nBUTk",
+          "mode": "list",
+          "cachedResultName": "n8n-Document",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1AYFPMmsDi2DV35VmISztZW5IsBTkcKlmIEjnh_nBUTk/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 991709918,
+          "mode": "list",
+          "cachedResultName": "Final Posting Status",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1AYFPMmsDi2DV35VmISztZW5IsBTkcKlmIEjnh_nBUTk/edit#gid=991709918"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "content_type": "={{ $('Parse Agent Output').item.json.content_type }}",
+            "status": "Published",
+            "Date": "={{ $('Code in JavaScript').item.json.Date }}",
+            "platform": "LinkedIn"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Date",
+              "displayName": "Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "content_type",
+              "displayName": "content_type",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "platform",
+              "displayName": "platform",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "8ee7f445-dcd0-45c9-94d9-c90218b0ffae",
+      "name": "Mark Row as Posted2",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        3728,
+        400
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "kGFu5i1Yve3CCoQv",
+          "name": "learning"
+        }
+      },
+      "notes": "Runs once per platform post (harmless, just re-sets the same status). This is what stops the next run from re-processing the same video."
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1AYFPMmsDi2DV35VmISztZW5IsBTkcKlmIEjnh_nBUTk",
+          "mode": "list",
+          "cachedResultName": "n8n-Document",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1AYFPMmsDi2DV35VmISztZW5IsBTkcKlmIEjnh_nBUTk/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 991709918,
+          "mode": "list",
+          "cachedResultName": "Final Posting Status",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1AYFPMmsDi2DV35VmISztZW5IsBTkcKlmIEjnh_nBUTk/edit#gid=991709918"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "content_type": "={{ $('Parse Agent Output').item.json.content_type }}",
+            "status": "Published",
+            "Date": "={{ $('Code in JavaScript').item.json.Date }}",
+            "platform": "fb Page"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Date",
+              "displayName": "Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "content_type",
+              "displayName": "content_type",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "platform",
+              "displayName": "platform",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "f17b9e9a-c4a0-4d47-9ec3-531d76eebc28",
+      "name": "Mark Row as Posted3",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        3184,
+        560
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "kGFu5i1Yve3CCoQv",
+          "name": "learning"
+        }
+      },
+      "notes": "Runs once per platform post (harmless, just re-sets the same status). This is what stops the next run from re-processing the same video."
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1AYFPMmsDi2DV35VmISztZW5IsBTkcKlmIEjnh_nBUTk",
+          "mode": "list",
+          "cachedResultName": "n8n-Document",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1AYFPMmsDi2DV35VmISztZW5IsBTkcKlmIEjnh_nBUTk/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 991709918,
+          "mode": "list",
+          "cachedResultName": "Final Posting Status",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1AYFPMmsDi2DV35VmISztZW5IsBTkcKlmIEjnh_nBUTk/edit#gid=991709918"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "content_type": "={{ $('Parse Agent Output').item.json.content_type }}",
+            "status": "Published",
+            "Date": "={{ $('Code in JavaScript').item.json.Date }}",
+            "platform": "Threads"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Date",
+              "displayName": "Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "content_type",
+              "displayName": "content_type",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "platform",
+              "displayName": "platform",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "815b7eae-99f9-44f7-bc43-2674f861ca83",
+      "name": "Mark Row as Posted4",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        3808,
+        1392
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "kGFu5i1Yve3CCoQv",
+          "name": "learning"
+        }
+      },
+      "notes": "Runs once per platform post (harmless, just re-sets the same status). This is what stops the next run from re-processing the same video."
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1AYFPMmsDi2DV35VmISztZW5IsBTkcKlmIEjnh_nBUTk",
+          "mode": "list",
+          "cachedResultName": "n8n-Document",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1AYFPMmsDi2DV35VmISztZW5IsBTkcKlmIEjnh_nBUTk/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 991709918,
+          "mode": "list",
+          "cachedResultName": "Final Posting Status",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1AYFPMmsDi2DV35VmISztZW5IsBTkcKlmIEjnh_nBUTk/edit#gid=991709918"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "content_type": "={{ $('Parse Agent Output').item.json.content_type }}",
+            "status": "Published",
+            "Date": "={{ $('Code in JavaScript').item.json.Date }}",
+            "platform": "TikTok"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Date",
+              "displayName": "Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "content_type",
+              "displayName": "content_type",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "platform",
+              "displayName": "platform",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "1cade10c-0cef-41c7-8416-c9a1a537a1d1",
+      "name": "Mark Row as Posted5",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        3888,
+        752
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "kGFu5i1Yve3CCoQv",
+          "name": "learning"
+        }
+      },
+      "notes": "Runs once per platform post (harmless, just re-sets the same status). This is what stops the next run from re-processing the same video."
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1AYFPMmsDi2DV35VmISztZW5IsBTkcKlmIEjnh_nBUTk",
+          "mode": "list",
+          "cachedResultName": "n8n-Document",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1AYFPMmsDi2DV35VmISztZW5IsBTkcKlmIEjnh_nBUTk/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 991709918,
+          "mode": "list",
+          "cachedResultName": "Final Posting Status",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1AYFPMmsDi2DV35VmISztZW5IsBTkcKlmIEjnh_nBUTk/edit#gid=991709918"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "content_type": "={{ $('Parse Agent Output').item.json.content_type }}",
+            "status": "Published",
+            "Date": "={{ $('Code in JavaScript').item.json.Date }}",
+            "platform": "Instagram"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Date",
+              "displayName": "Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "content_type",
+              "displayName": "content_type",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "platform",
+              "displayName": "platform",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "5c912acc-554c-4983-a9bd-d1bf6efbb4a4",
+      "name": "Mark Row as Posted6",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        3968,
+        1104
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "kGFu5i1Yve3CCoQv",
+          "name": "learning"
+        }
+      },
+      "notes": "Runs once per platform post (harmless, just re-sets the same status). This is what stops the next run from re-processing the same video."
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $json.id }}",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        272,
+        976
+      ],
+      "id": "d14c72f2-1c4a-43db-9beb-6e94734a8a02",
+      "name": "Download file2",
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "jMs80vT1iCwh0jsV",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.linkedin.com/v2/assets?action=registerUpload",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "linkedInOAuth2Api",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\n  \"registerUploadRequest\": {\n    \"recipes\": [\"urn:li:digitalmediaRecipe:feedshare-video\"],\n    \"owner\": \"urn:li:organization:127334108\",\n    \"serviceRelationships\": [\n      {\n        \"relationshipType\": \"OWNER\",\n        \"identifier\": \"urn:li:userGeneratedContent\"\n      }\n    ]\n  }\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        2976,
+        384
+      ],
+      "id": "c909f936-57da-4198-8102-86201db19add",
+      "name": "HTTP Request",
+      "credentials": {
+        "linkedInOAuth2Api": {
+          "id": "wEtwjewPwqXb2yJ5",
+          "name": "LinkedIn account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "PUT",
+        "url": "={{ $json.value.uploadMechanism['com.linkedin.digitalmedia.uploading.MediaUploadHttpRequest'].uploadUrl }}",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "linkedInOAuth2Api",
+        "sendBody": true,
+        "contentType": "binaryData",
+        "inputDataFieldName": "data",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        3376,
+        400
+      ],
+      "id": "30d5b9a2-e8c4-4b1d-8552-daedb0934d55",
+      "name": "HTTP Request1",
+      "credentials": {
+        "linkedInOAuth2Api": {
+          "id": "wEtwjewPwqXb2yJ5",
+          "name": "LinkedIn account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineAll",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        3184,
+        400
+      ],
+      "id": "0b067891-e521-4cde-a0c1-1d7749cfa661",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.linkedin.com/v2/ugcPosts",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "linkedInOAuth2Api",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"author\": \"urn:li:organization:127334108\",\n  \"lifecycleState\": \"PUBLISHED\",\n  \"specificContent\": {\n    \"com.linkedin.ugc.ShareContent\": {\n      \"media\": [\n        {\n          \"status\": \"READY\",\n          \"media\": {{ JSON.stringify($('HTTP Request').item.json.value.asset) }}\n        }\n      ],\n      \"shareCommentary\": {\n        \"text\": {{ JSON.stringify($('Parse Agent Output').item.json.linkedin_caption) }}\n      },\n      \"shareMediaCategory\": \"VIDEO\"\n    }\n  },\n  \"visibility\": {\n    \"com.linkedin.ugc.MemberNetworkVisibility\": \"PUBLIC\"\n  }\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        3552,
+        400
+      ],
+      "id": "615d76ef-7f70-46f5-9a94-c02ed71bb18f",
+      "name": "HTTP Request2",
+      "credentials": {
+        "linkedInOAuth2Api": {
+          "id": "wEtwjewPwqXb2yJ5",
+          "name": "LinkedIn account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "=https://graph.threads.net/v1.0/{{ $json.id }}",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "httpBearerAuth",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "fields",
+              "value": "status,error_message"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        3072,
+        1376
+      ],
+      "id": "38ccef98-dd22-404f-b289-189770286bc3",
+      "name": "HTTP Request3",
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "uipivgzbVexLwy4Z",
+          "name": "For Demo Purpose"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "uploadFile",
+        "resource_type_file": "video",
+        "additionalFieldsFile": {}
+      },
+      "type": "n8n-nodes-cloudinary.cloudinary",
+      "typeVersion": 2,
+      "position": [
+        2928,
+        1008
+      ],
+      "id": "a43f0f98-b0bb-4f50-a102-02839d712afb",
+      "name": "Upload an asset from file data",
+      "credentials": {
+        "cloudinaryApi": {
+          "id": "bj4cmfUL8Qt1om1z",
+          "name": "Cloudinary account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Get today's date in YYYY-MM-DD format (local time)\nconst now = new Date();\nconst todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;\n\n// Replace 'Date' with the EXACT column header name in your Google Sheet\nconst dateColumnName = 'Date'; \n\nconst filteredItems = [];\n\nfor (const item of $input.all()) {\n  const rowDateRaw = item.json[dateColumnName];\n  \n  if (rowDateRaw) {\n    const rowDate = new Date(rowDateRaw);\n    const rowDateStr = `${rowDate.getFullYear()}-${String(rowDate.getMonth() + 1).padStart(2, '0')}-${String(rowDate.getDate()).padStart(2, '0')}`;\n    \n    // Check if row date matches today's date\n    if (rowDateStr === todayStr) {\n      filteredItems.push(item);\n    }\n  }\n}\n\nreturn filteredItems;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -160,
+        976
+      ],
+      "id": "7652543f-4585-4026-8408-b124cf201ba8",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.is_final_draft }}",
+                    "rightValue": false,
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "equals"
+                    },
+                    "id": "866e329a-8d2a-4655-852f-aea0214f0946"
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "1b364a8b-8b5c-451b-9745-319fa2900deb",
+                    "leftValue": "={{ $json.is_final_draft }}",
+                    "rightValue": true,
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        1488,
+        768
+      ],
+      "id": "0fee03a1-2dc5-4b58-b863-ff622dd8f680",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "C0BNU6YADFV",
+          "mode": "list",
+          "cachedResultName": "youtube-demo"
+        },
+        "text": "={{ $json.chat_message }}",
+        "otherOptions": {
+          "thread_ts": {
+            "replyValues": {
+              "thread_ts": "={{ $('Slack Approval').item.json.message?.ts || $('Slack Approval').item.json.ts }}"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.5,
+      "position": [
+        1664,
+        672
+      ],
+      "id": "e0c746fd-6eb9-42ff-8a13-fd19d645cc84",
+      "name": "Send a message",
+      "webhookId": "4bbfac57-b8ef-4dee-b053-8e44d6f20f15",
+      "credentials": {
+        "slackApi": {
+          "id": "RNjIiYrZLB4N4tOJ",
+          "name": "Slack account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1AYFPMmsDi2DV35VmISztZW5IsBTkcKlmIEjnh_nBUTk",
+          "mode": "list",
+          "cachedResultName": "n8n-Document",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1AYFPMmsDi2DV35VmISztZW5IsBTkcKlmIEjnh_nBUTk/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 239425221,
+          "mode": "list",
+          "cachedResultName": "Social Media Auto Posting",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1AYFPMmsDi2DV35VmISztZW5IsBTkcKlmIEjnh_nBUTk/edit#gid=239425221"
+        },
+        "filtersUI": {
+          "values": []
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -304,
+        976
+      ],
+      "id": "42967397-0fb6-420e-b7aa-56100cb3a6f2",
+      "name": "Get row(s) in sheet1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "kGFu5i1Yve3CCoQv",
+          "name": "learning"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "trigger": [
+          "message"
+        ],
+        "channelId": {
+          "__rl": true,
+          "value": "C0BNU6YADFV",
+          "mode": "list",
+          "cachedResultName": "youtube-demo"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.slackTrigger",
+      "typeVersion": 1,
+      "position": [
+        -592,
+        800
+      ],
+      "id": "11802b4f-55d0-468e-a399-396243bd5411",
+      "name": "Slack Trigger",
+      "webhookId": "4d013b65-38a0-4004-bccc-372a4fa92fef",
+      "credentials": {
+        "slackApi": {
+          "id": "RNjIiYrZLB4N4tOJ",
+          "name": "Slack account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.thread_ts }}",
+                    "rightValue": "=",
+                    "operator": {
+                      "type": "string",
+                      "operation": "notEmpty",
+                      "singleValue": true
+                    },
+                    "id": "73e1177c-df35-47fd-bef9-6bf28350fe76"
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "a81c9677-e8f8-4ad5-b3dd-2cdc40f6fcd2",
+                    "leftValue": "={{ $json.thread_ts }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "string",
+                      "operation": "empty",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        -416,
+        800
+      ],
+      "id": "af3cb0c5-18b4-4b51-afd2-1dabfbea4cce",
+      "name": "Switch1"
+    },
+    {
+      "parameters": {
+        "resource": "fileFolder",
+        "queryString": "={{ $json['Title Name'] }}",
+        "limit": 1,
+        "filter": {},
+        "options": {
+          "fields": [
+            "*"
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        2240,
+        768
+      ],
+      "id": "1a1d2139-5467-4977-8b27-cb7f73911d17",
+      "name": "Search files and folders",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "jMs80vT1iCwh0jsV",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Get today's date in YYYY-MM-DD format (local time)\nconst now = new Date();\nconst todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;\n\n// Replace 'Date' with the EXACT column header name in your Google Sheet\nconst dateColumnName = 'Date'; \n\nconst filteredItems = [];\n\nfor (const item of $input.all()) {\n  const rowDateRaw = item.json[dateColumnName];\n  \n  if (rowDateRaw) {\n    const rowDate = new Date(rowDateRaw);\n    const rowDateStr = `${rowDate.getFullYear()}-${String(rowDate.getMonth() + 1).padStart(2, '0')}-${String(rowDate.getDate()).padStart(2, '0')}`;\n    \n    // Check if row date matches today's date\n    if (rowDateStr === todayStr) {\n      filteredItems.push(item);\n    }\n  }\n}\n\nreturn filteredItems;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2048,
+        768
+      ],
+      "id": "3957c7b0-f206-4b66-8dfd-f19e30a9267c",
+      "name": "Code in JavaScript2"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1AYFPMmsDi2DV35VmISztZW5IsBTkcKlmIEjnh_nBUTk",
+          "mode": "list",
+          "cachedResultName": "n8n-Document",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1AYFPMmsDi2DV35VmISztZW5IsBTkcKlmIEjnh_nBUTk/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 239425221,
+          "mode": "list",
+          "cachedResultName": "Social Media Auto Posting",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1AYFPMmsDi2DV35VmISztZW5IsBTkcKlmIEjnh_nBUTk/edit#gid=239425221"
+        },
+        "filtersUI": {
+          "values": []
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1856,
+        768
+      ],
+      "id": "8f0f94bb-cc78-4d10-86af-5965cc44d058",
+      "name": "Get row(s) in sheet2",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "kGFu5i1Yve3CCoQv",
+          "name": "learning"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "amount": 60
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        3264,
+        1376
+      ],
+      "id": "f68b17cf-6a9e-494c-b27c-7c7a58030530",
+      "name": "Wait1",
+      "webhookId": "d34d6aaa-2535-4009-afa2-c1358d106caa"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "a1a6e7ca-a358-453e-abe8-3de47544ae83",
+              "leftValue": "={{ $json.status }}",
+              "rightValue": "IN_PROGRESS",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        3472,
+        1376
+      ],
+      "id": "8a775ad4-0cc1-45d4-bf2e-b12eec6fadcb",
+      "name": "If1"
+    },
+    {
+      "parameters": {
+        "amount": 20
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        3632,
+        1232
+      ],
+      "id": "d12bb96f-2d84-4176-ac06-aa9e6422f0e2",
+      "name": "Wait2",
+      "webhookId": "22d8b820-5a1e-42f4-8bfa-a845bb387de0"
+    },
+    {
+      "parameters": {
+        "url": "=https://graph.threads.net/v1.0/{{ $('Create Threads Container').item.json.id }}",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "httpBearerAuth",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "fields",
+              "value": "status,error_message"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        3808,
+        1232
+      ],
+      "id": "b6dbc8c8-24d1-4805-9c04-3390e5e7cdc1",
+      "name": "HTTP Request4",
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "uipivgzbVexLwy4Z",
+          "name": "For Demo Purpose"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "=https://graph.facebook.com/v20.0/{{ $json.id }}",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "facebookGraphApi",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "fields",
+              "value": "status_code,status"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        3280,
+        1008
+      ],
+      "id": "b34d2e88-461b-40cf-b582-e759cf607e89",
+      "name": "HTTP Request5",
+      "credentials": {
+        "facebookGraphApi": {
+          "id": "6yAbHLhzuZmJcB8y",
+          "name": "FB Page + Insta API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "amount": 2
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        3472,
+        1008
+      ],
+      "id": "23f7629a-dee8-405c-8320-091d918e8b97",
+      "name": "Wait3",
+      "webhookId": "d34d6aaa-2535-4009-afa2-c1358d106caa"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "a1a6e7ca-a358-453e-abe8-3de47544ae83",
+              "leftValue": "={{ $json.status_code }}",
+              "rightValue": "IN_PROGRESS",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        3616,
+        1008
+      ],
+      "id": "48da9253-69ab-4fd1-924e-9171d0ef0b2e",
+      "name": "If2"
+    },
+    {
+      "parameters": {
+        "amount": 20
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        3792,
+        912
+      ],
+      "id": "f880334f-8581-4384-b2af-e0f67faa6bf3",
+      "name": "Wait4",
+      "webhookId": "22d8b820-5a1e-42f4-8bfa-a845bb387de0"
+    },
+    {
+      "parameters": {
+        "url": "=https://graph.facebook.com/v20.0/{{ $('Create IG Media Container').item.json.id }}",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "facebookGraphApi",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "fields",
+              "value": "status_code,status"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        3920,
+        912
+      ],
+      "id": "ef05acda-d628-4030-b94b-d8d30b08308c",
+      "name": "HTTP Request6",
+      "credentials": {
+        "facebookGraphApi": {
+          "id": "6yAbHLhzuZmJcB8y",
+          "name": "FB Page + Insta API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1AYFPMmsDi2DV35VmISztZW5IsBTkcKlmIEjnh_nBUTk",
+          "mode": "list",
+          "cachedResultName": "n8n-Document",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1AYFPMmsDi2DV35VmISztZW5IsBTkcKlmIEjnh_nBUTk/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 239425221,
+          "mode": "list",
+          "cachedResultName": "Social Media Auto Posting",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1AYFPMmsDi2DV35VmISztZW5IsBTkcKlmIEjnh_nBUTk/edit#gid=239425221"
+        },
+        "filtersUI": {
+          "values": []
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -176,
+        784
+      ],
+      "id": "63f69ed3-e8f2-416c-a7cb-64b1728a7415",
+      "name": "Get row(s) in sheet3",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "kGFu5i1Yve3CCoQv",
+          "name": "learning"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Get today's date in YYYY-MM-DD format (local time)\nconst now = new Date();\nconst todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;\n\n// Replace 'Date' with the EXACT column header name in your Google Sheet\nconst dateColumnName = 'Date'; \n\nconst filteredItems = [];\n\nfor (const item of $input.all()) {\n  const rowDateRaw = item.json[dateColumnName];\n  \n  if (rowDateRaw) {\n    const rowDate = new Date(rowDateRaw);\n    const rowDateStr = `${rowDate.getFullYear()}-${String(rowDate.getMonth() + 1).padStart(2, '0')}-${String(rowDate.getDate()).padStart(2, '0')}`;\n    \n    // Check if row date matches today's date\n    if (rowDateStr === todayStr) {\n      filteredItems.push(item);\n    }\n  }\n}\n\nreturn filteredItems;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        80,
+        784
+      ],
+      "id": "982cc015-a353-44dd-8af2-50dcf8a44559",
+      "name": "Code in JavaScript3"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1AYFPMmsDi2DV35VmISztZW5IsBTkcKlmIEjnh_nBUTk",
+          "mode": "list",
+          "cachedResultName": "n8n-Document",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1AYFPMmsDi2DV35VmISztZW5IsBTkcKlmIEjnh_nBUTk/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 239425221,
+          "mode": "list",
+          "cachedResultName": "Social Media Auto Posting",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1AYFPMmsDi2DV35VmISztZW5IsBTkcKlmIEjnh_nBUTk/edit#gid=239425221"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1904,
+        992
+      ],
+      "id": "db05c4b8-8dee-44af-8889-dbd6a2962131",
+      "name": "Get row(s) in sheet4",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "kGFu5i1Yve3CCoQv",
+          "name": "learning"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Fetch all incoming items from Google Sheet node\nconst allRows = $input.all().map(item => item.json);\n\n// Get today's date in M/D/YYYY and YYYY-MM-DD formats\nconst now = new Date();\nconst todayStrShort = `${now.getMonth() + 1}/${now.getDate()}/${now.getFullYear()}`;\nconst todayStrISO = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;\n\n// Helper to match dates cleanly\nfunction isToday(dateStr) {\n  if (!dateStr) return false;\n  const d = new Date(dateStr);\n  if (!isNaN(d.getTime())) {\n    return d.getFullYear() === now.getFullYear() && \n           d.getMonth() === now.getMonth() && \n           d.getDate() === now.getDate();\n  }\n  return String(dateStr).trim() === todayStrShort || String(dateStr).trim() === todayStrISO;\n}\n\n// 1. Find row matching today's date\n// 2. Fall back to first row with a valid Session ID\n// 3. Fall back to first returned item\nconst sheetData = allRows.find(row => isToday(row['Date'])) \n  || allRows.find(row => row['Session ID'] && String(row['Session ID']).trim() !== '') \n  || allRows[0] \n  || {};\n\n// Safely reference previous nodes\nconst parseAgentData = $('Parse Agent Output').first()?.json || {};\nconst slackApprovalData = $node[\"Slack Approval\"]?.json || $node[\"Slack Trigger\"]?.json || {};\n\n// Extract draft and metadata\nconst rejectedDraft = parseAgentData.slack_formatted_text || \n  `FB: ${parseAgentData.fb_caption || ''}\\nIG: ${parseAgentData.ig_caption || ''}\\nYT Title: ${parseAgentData.yt_title || ''}`;\n\nconst sessionId = sheetData['Session ID'] || parseAgentData['Session ID'] || '';\nconst userComment = slackApprovalData?.data?.comment || slackApprovalData?.text || 'No specific comment provided';\n\n// Formatted instruction text for the AI Agent\nconst aiPromptText = `MODE: HUMAN REJECTED DRAFT\nApproved: false\nSession ID: ${sessionId}\nFeedback/Comment: ${userComment}\n\n--- REJECTED DRAFT ---\n${rejectedDraft}\n\nINSTRUCTION: Set is_final_draft to false. Ask the user in Slack what specific changes or improvements they would like for this draft. Do NOT write full new captions yet.`.trim();\n\nreturn [{\n  json: {\n    text: aiPromptText,\n    approved: false,\n    'Session ID': sessionId,\n    rejected_draft: rejectedDraft,\n    user_comment: userComment,\n    ...sheetData\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2064,
+        992
+      ],
+      "id": "63524c6e-115d-4963-8cb9-126a003a42c6",
+      "name": "Code in JavaScript4"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json?.text || $node[\"Slack Trigger\"]?.json?.text || \"No prompt text provided\" }}",
+        "options": {
+          "systemMessage": "=You are a Lead Social Media Strategist working directly with a human editor via Slack.\n\n### STRICT OPERATIONAL RULES FOR \"is_final_draft\"\n\n1. REJECTION / CHAT MODE (\"is_final_draft\": false):\n   - IF the user message starts with \"MODE: HUMAN REJECTED DRAFT\", set \"is_final_draft\": false.\n   - Do NOT generate full captions. Set \"chat_message\" to ask the human directly what they want changed.\n   - Set \"revision_summary\" to \"\".\n\n2. REVISION MODE (\"is_final_draft\": true):\n   - IF the human gives specific instructions on what to change, apply those changes and keep the rest identical.\n   - Set \"is_final_draft\": true.\n   - You MUST populate \"revision_summary\" explicitly detailing:\n     * What specific fields were updated.\n     * What fields were kept identical.\n\n3. INITIAL GENERATION MODE (\"is_final_draft\": true):\n   - IF the input is raw brief text, generate ready-to-review captions.\n   - Set \"is_final_draft\": true.\n   - Set \"revision_summary\" to \"Initial draft generated based on source content.\"\n\n---\n\n### REQUIRED OUTPUT FORMAT\nRespond ONLY with valid JSON matching this exact structure:\n\n{\n  \"is_final_draft\": true,\n  \"chat_message\": \"\",\n  \"revision_summary\": \"\",\n  \"captions\": {\n    \"content_type\": \"Video\",\n    \"fb_caption\": \"\",\n    \"ig_caption\": \"\",\n    \"threads_caption\": \"\",\n    \"linkedin_caption\": \"\",\n    \"tiktok_caption\": \"\",\n    \"yt_title\": \"\",\n    \"yt_description\": \"\"\n  }\n}"
+        }
+      },
+      "id": "ab841202-3b44-4cea-8a24-c04631abb531",
+      "name": "AI Content Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        1040,
+        768
+      ]
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.5-flash",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        1040,
+        976
+      ],
+      "id": "48f4e640-9223-4a95-b4a5-d04d1167a131",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "x4wEAUi4XLxVRcGg",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ \n  (() => {\n    try { return $node[\"Code in JavaScript\"].json['Session ID']; } catch(e) {}\n    try { return $node[\"Code in JavaScript3\"].json['Session ID']; } catch(e) {}\n    try { return $node[\"Code in JavaScript4\"].json['Session ID']; } catch(e) {}\n    return \"default_session\";\n  })()\n}}",
+        "contextWindowLength": 3
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.4,
+      "position": [
+        1152,
+        992
+      ],
+      "id": "059ca1a1-33f5-4b2c-9edd-3496c78f5e65",
+      "name": "Simple Memory1"
+    },
+    {
+      "parameters": {
+        "content": "# SECTION OVERVIEW 1\n\n• **SLACK TRIGGER**\n• **SWITCH NODE FOR TOP LEVEL MESSAGE & THREAD REPLY**\n• **GOOGLE SHEET & CODE NODE TO EXTRACT TODAY'S DATE & SESSION ID**\n• **GOOGLE DRIVE TO EXTRACT THE REEL**\n• **TRANSCRIBE NODE FOR REELS SCRIPT**\n• **CODE NODE FOR IMAGE/POST TO BUILD TEXT FROM TITLE**",
+        "height": 736,
+        "width": 1536,
+        "color": "#3D3333"
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -656,
+        544
+      ],
+      "id": "ad673598-cbf2-45a8-877a-3bf6de683279",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "# SECTION OVERVIEW 2\n\n• **AI AGENT CREATES NEW DRAFT**\n• **HUMAN-IN-LOOP WITH SLACK**\n• **IF DRAFT REJECTED, CREATES NEW DRAFT**\n• **AI AGENT REPLIES WHAT IS CHANGED IN NEW DRAFT**\n• **CYCLE KEEP GOING ON UNTIL FINAL HUMAN APPROVAL**\n• **IF APPROVED, PUBLISHED REELS**\n",
+        "height": 736,
+        "width": 1632,
+        "color": "#92EBED"
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        912,
+        544
+      ],
+      "id": "f389ae4f-8fce-4b18-91bd-c12be4ddd059",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "                                                                                                                                            \n# YOUTUBE SHORTS\n\n",
+        "height": 208,
+        "width": 1424,
+        "color": "#84E6C0"
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        2720,
+        128
+      ],
+      "id": "7035d0b3-da81-45a2-99e0-02619458498e",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "content": "# LINKEDIN\n\n",
+        "height": 208,
+        "width": 1424,
+        "color": "#FD8B8B"
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        2720,
+        336
+      ],
+      "id": "8fcf457c-fa20-449f-818f-0979c2caed25",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "content": "# FB PAGE\n",
+        "height": 176,
+        "width": 1424,
+        "color": "#DCEE81"
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        2720,
+        544
+      ],
+      "id": "8febc4b4-87db-410a-8708-86a50dd2eb45",
+      "name": "Sticky Note4"
+    },
+    {
+      "parameters": {
+        "content": "# TIKTOK\n\n",
+        "height": 192,
+        "width": 1424,
+        "color": "#ABBAF7"
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        2720,
+        720
+      ],
+      "id": "84d9421b-7598-4d7e-a33a-978802dc9aa0",
+      "name": "Sticky Note5"
+    },
+    {
+      "parameters": {
+        "content": "# INSTAGRAM\n\n",
+        "height": 320,
+        "width": 1424,
+        "color": "#84E6C0"
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        2720,
+        912
+      ],
+      "id": "2afebffe-759b-495c-a4e6-263f2c125c6a",
+      "name": "Sticky Note6"
+    },
+    {
+      "parameters": {
+        "content": "# THREADS\n\n",
+        "height": 320,
+        "width": 1424,
+        "color": "#340404"
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        2720,
+        1232
+      ],
+      "id": "7db0dd47-cb80-4e9b-8064-fcc03ac7450b",
+      "name": "Sticky Note7"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Route by Content Type": {
+      "main": [
+        [
+          {
+            "node": "Build Text From Title",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Transcribe Audio1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Text From Title": {
+      "main": [
+        [
+          {
+            "node": "AI Content Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Slack Approval": {
+      "main": [
+        [
+          {
+            "node": "Check Approval",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Approval": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Get row(s) in sheet4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Skip YouTube If": {
+      "main": [
+        [
+          {
+            "node": "Upload YouTube Short",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search files and folders1": {
+      "main": [
+        [
+          {
+            "node": "Download file2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download file1": {
+      "main": [
+        [
+          {
+            "node": "Skip YouTube If",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Post to FB Page",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Skip YouTube If1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          },
+          {
+            "node": "Upload an asset from file data",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Create Threads Container",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Transcribe Audio1": {
+      "main": [
+        [
+          {
+            "node": "AI Content Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse Agent Output": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Post to FB Page": {
+      "main": [
+        [
+          {
+            "node": "Mark Row as Posted3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create IG Media Container": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Publish IG Reel": {
+      "main": [
+        [
+          {
+            "node": "Mark Row as Posted6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload YouTube Short": {
+      "main": [
+        [
+          {
+            "node": "Mark Row as Posted",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Threads Container": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Publish Threads Post": {
+      "main": [
+        [
+          {
+            "node": "Mark Row as Posted4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "TikTok Container1": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Refresh Token1": {
+      "main": [
+        [
+          {
+            "node": "TikTok Container1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript1": {
+      "main": [
+        [
+          {
+            "node": "Tiktok Upload Node1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Tiktok Upload Node1": {
+      "main": [
+        [
+          {
+            "node": "Mark Row as Posted5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Skip YouTube If1": {
+      "main": [
+        [
+          {
+            "node": "Refresh Token1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download file2": {
+      "main": [
+        [
+          {
+            "node": "Route by Content Type",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request1": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload an asset from file data": {
+      "main": [
+        [
+          {
+            "node": "Create IG Media Container",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Search files and folders1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request2": {
+      "main": [
+        [
+          {
+            "node": "Mark Row as Posted2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Slack Approval",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet1": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Slack Trigger": {
+      "main": [
+        [
+          {
+            "node": "Switch1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch1": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet3",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Get row(s) in sheet1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript2": {
+      "main": [
+        [
+          {
+            "node": "Search files and folders",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet2": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search files and folders": {
+      "main": [
+        [
+          {
+            "node": "Download file1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request3": {
+      "main": [
+        [
+          {
+            "node": "Wait1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait1": {
+      "main": [
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "Wait2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Publish Threads Post",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait2": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request4": {
+      "main": [
+        [
+          {
+            "node": "Publish Threads Post",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request5": {
+      "main": [
+        [
+          {
+            "node": "Wait3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait3": {
+      "main": [
+        [
+          {
+            "node": "If2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If2": {
+      "main": [
+        [
+          {
+            "node": "Wait4",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Publish IG Reel",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait4": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request6": {
+      "main": [
+        [
+          {
+            "node": "Publish IG Reel",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet3": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript3": {
+      "main": [
+        [
+          {
+            "node": "AI Content Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet4": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript4": {
+      "main": [
+        [
+          {
+            "node": "AI Content Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Content Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory1": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Content Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Content Agent": {
+      "main": [
+        [
+          {
+            "node": "Parse Agent Output",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false,
+    "timeSavedMode": "fixed",
+    "timezone": "Asia/Karachi",
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "versionId": "f798fecf-44fa-420d-a657-8176638b6d90",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "ab01540ceca655df275cdf692450094d40e16934788f62d529a03e32a7c0d908"
+  },
+  "nodeGroups": [],
+  "id": "4P5M7gG0M55C1zBK",
+  "tags": []
+}
